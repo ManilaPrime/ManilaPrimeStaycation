@@ -2069,7 +2069,9 @@
                                         Send Message
                                     </button>
                                 </div>
-                                <p id="thank-you" class="text-green-600 font-medium hidden mt-4">Thank you for your message!</p>
+                                <p id="thank-you" class="text-green-600 font-medium hidden mt-4">
+                                    Thank you for your message!
+                                </p>
                             </form>  
                         </div>
                     </div>
@@ -2242,8 +2244,7 @@
       const thankYou = document.getElementById("thank-you");
     
       form.addEventListener("submit", async function (e) {
-        e.preventDefault(); // Stop the default page reload
-    
+        e.preventDefault();
         const formData = new FormData(form);
     
         const response = await fetch("https://formspree.io/f/xdkdlpjr", {
@@ -2253,21 +2254,14 @@
         });
     
         if (response.ok) {
-          form.reset(); // Clear the inputs
-          thankYou.classList.remove("hidden"); // Show thank-you message
-    
-          // Optionally hide the message after 5 seconds
-          setTimeout(() => {
-            thankYou.classList.add("hidden");
-          }, 5000);
-        } else {
-          alert("There was a problem submitting the form.");
+          form.reset();
+          thankYou.classList.remove("hidden");
         }
       });
     });
     </script>
 
-        
+    <script>    
         // Image modal functionality
         function openModal(imageId) {
             const modal = document.getElementById('imageModal');
