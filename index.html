@@ -2349,6 +2349,29 @@
         
         // Initialize carousel
         updateCarousel();
+        // Swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+        
+        carouselTrack.addEventListener("touchstart", (e) => {
+            startX = e.touches[0].clientX;
+        });
+        
+        carouselTrack.addEventListener("touchend", (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            if (endX < startX - 50) {
+                // Swipe left → next slide
+                nextSlide();
+            } else if (endX > startX + 50) {
+                // Swipe right → previous slide
+                prevSlide();
+            }
+        }
+
         
         // Calendar functionality
         const currentDate = new Date();
