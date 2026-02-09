@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Calendar Sync</title>
+</head>
+<body style="font-family:sans-serif; padding:40px">
+
+  <h1>Admin Sync Dashboard</h1>
+
+  <button id="syncBtn" style="padding:20px; font-size:18px">
+    Sync All Calendars
+  </button>
+
+  <p id="status"></p>
+
+  <script>
+    document.getElementById("syncBtn").onclick = async () => {
+      const status = document.getElementById("status")
+      status.innerText = "Syncing..."
+
+      const res = await fetch("/api/sync")
+      const data = await res.json()
+
+      status.innerText = JSON.stringify(data, null, 2)
+    }
+  </script>
+
+</body>
+</html>
