@@ -6,7 +6,7 @@ const REPO_NAME = "ManilaPrimeStaycation"
 const BRANCH = "main"
 
 const units = {
-  S1TC2_595: "AIRBNB_ICS_LINK_HERE",
+  S1TC2_595: "https://www.airbnb.com/calendar/ical/1530361023768759063.ics?t=baffb130590a438cac29735b143b96fe&locale=en-GB",
   S1TC2_1567: "https://www.airbnb.com/calendar/ical/1600802153832922086.ics?t=c083a5d686354f0cb6948556c957c132",
   S1TC2_1569: "https://www.airbnb.com/calendar/ical/1542649713581564854.ics?t=6d9d08b2e06a498f971b66aaf6917b22",
   S1TC2_1583: "https://www.airbnb.com/calendar/ical/1514352264532693099.ics?t=63ee007127de4958b2fff3389e160f29",
