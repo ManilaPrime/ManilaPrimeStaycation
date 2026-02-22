@@ -1,8 +1,8 @@
 import ical from "node-ical"
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-const REPO_OWNER = "YOUR_GITHUB_USERNAME"
-const REPO_NAME = "YOUR_REPO_NAME"
+const REPO_OWNER = "ManilaPrime"
+const REPO_NAME = "ManilaPrimeStaycation"
 const BRANCH = "main"
 
 const units = {
@@ -59,11 +59,13 @@ export default async function handler(req, res) {
       const data = await ical.async.fromURL(url)
 
       const bookings = Object.values(data)
-        .filter(e => e.type === "VEVENT")
+        .filter(e => e.type === "VEVENT" && e.start && e.end)
+        .filter(e => e.status !== "CANCELLED") // remove cancelled stays
         .map(e => ({
-          start: e.start,
-          end: e.end
+          start: new Date(e.start).toISOString().split("T")[0],
+          end: new Date(e.end).toISOString().split("T")[0]
         }))
+        .sort((a, b) => new Date(a.start) - new Date(b.start))
 
       await uploadToGitHub(
         `data/${unit}.json`,
