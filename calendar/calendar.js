@@ -1,59 +1,23 @@
-let currentUnit = null
-let bookings = []
-
-async function loadCalendar(unit) {
-  currentUnit = unit
-
-  try {
-    const res = await fetch(`/data/${unit}.json`)
-
-    if (!res.ok) {
-      console.warn("No calendar found for", unit)
-      bookings = []
-    } else {
-      bookings = await res.json()
-    }
-
-    console.log("Loaded bookings:", bookings)
-
-    renderCalendar()
-
-  } catch (err) {
-    console.error("Calendar load failed:", err)
-    bookings = []
-    renderCalendar()
-  }
-}
-
 function renderCalendar() {
-  // 🔥 THIS connects to your existing calendar UI
+  document.querySelectorAll(".calendar-day").forEach(dayEl => {
+    const dateStr = dayEl.dataset.date
 
-  // Example logic:
-  // loop over bookings
-  // mark days as red/booked
+    if (!dateStr) return
 
-  // You already have a render function —
-  // just inject bookings into it
+    const date = new Date(dateStr)
 
-  console.log("Render calendar with:", bookings)
-}
+    const isBooked = bookings.some(b => {
+      const start = new Date(b.start)
+      const end = new Date(b.end)
 
-document.querySelectorAll(".property-selector").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".property-selector")
-      .forEach(b => b.classList.remove("active"))
+      // Airbnb checkout day should NOT be blocked
+      return date >= start && date < end
+    })
 
-    btn.classList.add("active")
-
-    const unit = btn.dataset.property
-    loadCalendar(unit)
+    if (isBooked) {
+      dayEl.classList.add("booked")
+    } else {
+      dayEl.classList.remove("booked")
+    }
   })
-})
-
-
-// Load default property on page open
-const defaultBtn = document.querySelector(".property-selector.active")
-if (defaultBtn) {
-  loadCalendar(defaultBtn.dataset.property)
 }
