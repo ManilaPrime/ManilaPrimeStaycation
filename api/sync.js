@@ -18,7 +18,6 @@ const units = {
   S3T1_372: "https://www.airbnb.com/calendar/ical/1550714503840063391.ics?t=8c87fe6c5145401fa2f6a37ddb3bb2e2",
   S3T1_525: "https://www.airbnb.com/calendar/ical/1573584451241601621.ics?t=50178d21eec548e5a8ca38862a3ecc55",
   S3T1_855: "https://www.airbnb.com/calendar/ical/1521108058648348925.ics?t=ddc07a9f4efb45d7bc55fcd79084690d",
-  bedspace: "AIRBNB_ICS_LINK_HERE"
 }
 
 async function uploadToGitHub(path, content) {
