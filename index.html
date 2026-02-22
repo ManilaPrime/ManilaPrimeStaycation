@@ -3035,7 +3035,7 @@
         const currentDate = new Date();
         let currentMonth = currentDate.getMonth();
         let currentYear = currentDate.getFullYear();
-        let selectedProperty = 'premium';
+        let selectedProperty = document.querySelector('.property-selector')?.dataset.property || '';
         let selectedDates = [];
         let checkInDate = null;
         let checkOutDate = null;
@@ -3051,8 +3051,13 @@
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
+
+        async function renderCalendar() {
+          const bookings = await window.getBookingsForUnit(selectedProperty);
+          generateCalendar(currentMonth, currentYear, bookings);
+        }
         
-        function generateCalendar(month, year) {
+        function generateCalendar(month, year, bookings = []) {
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const calendarDays = document.getElementById('calendar-days');
@@ -3073,7 +3078,12 @@
                 const dayElement = document.createElement('button');
                 const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isPastDate = new Date(year, month, day) < new Date().setHours(0, 0, 0, 0);
-                const isBooked = false; // booking is applied AFTER render via /data/<unit>.json
+                const isBooked = bookings.some(b => {
+                  const start = new Date(b.start);
+                  const end = new Date(b.end);
+                  const d = new Date(dateString);
+                  return d >= start && d < end; // checkout not blocked
+                });
                 const isSelected = selectedDates.includes(dateString);
                 
                 dayElement.className = 'h-12 w-full rounded-lg text-center font-medium transition-all duration-300 ';
@@ -3127,7 +3137,7 @@
                 selectedDates = [dateString];
             }
             
-            generateCalendar(currentMonth, currentYear);
+            renderCalendar().catch(console.error);
         }
         
         function updateSelectedDatesDisplay() {
@@ -3187,7 +3197,7 @@
                 selectedDates = [];
                 
                 // Regenerate calendar
-                generateCalendar(currentMonth, currentYear);
+                renderCalendar().catch(console.error);
                 updateSelectedDatesDisplay();
             });
         });
@@ -3199,7 +3209,7 @@
                 currentMonth = 11;
                 currentYear--;
             }
-            generateCalendar(currentMonth, currentYear);
+            renderCalendar().catch(console.error);
         });
         
         document.getElementById('next-month').addEventListener('click', () => {
@@ -3208,7 +3218,7 @@
                 currentMonth = 0;
                 currentYear++;
             }
-            generateCalendar(currentMonth, currentYear);
+            renderCalendar().catch(console.error);
         });
         
         // Proceed to booking button
@@ -3221,7 +3231,7 @@
         });
         
         // Initialize calendar
-        generateCalendar(currentMonth, currentYear);
+        renderCalendar().catch(console.error);
         window.addEventListener("load", () => {
           if (window.refreshCalendarBlocking) {
             window.refreshCalendarBlocking(selectedProperty).catch(console.error);
