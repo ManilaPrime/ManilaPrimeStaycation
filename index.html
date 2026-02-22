@@ -3046,12 +3046,6 @@
             bedspace: 899
         };
         
-        // Sample booked dates (in a real app, this would come from your booking system)
-        const bookedDates = {
-            premium: ['2024-01-15', '2024-01-16', '2024-01-20', '2024-01-21'],
-            deluxe: ['2024-01-18', '2024-01-19', '2024-01-25', '2024-01-26'],
-            bedspace: ['2024-01-22', '2024-01-23']
-        };
         
         const monthNames = [
             'January', 'February', 'March', 'April', 'May', 'June',
@@ -3079,7 +3073,7 @@
                 const dayElement = document.createElement('button');
                 const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isPastDate = new Date(year, month, day) < new Date().setHours(0, 0, 0, 0);
-                const isBooked = bookedDates[selectedProperty] && bookedDates[selectedProperty].includes(dateString);
+                const isBooked = false; // booking is applied AFTER render via /data/<unit>.json
                 const isSelected = selectedDates.includes(dateString);
                 
                 dayElement.className = 'h-12 w-full rounded-lg text-center font-medium transition-all duration-300 ';
@@ -3100,6 +3094,9 @@
                 }
                 
                 calendarDays.appendChild(dayElement);
+            }
+            if (window.refreshCalendarBlocking) {
+              window.refreshCalendarBlocking(selectedProperty).catch(console.error);
             }
         }
         
@@ -3225,6 +3222,11 @@
         
         // Initialize calendar
         generateCalendar(currentMonth, currentYear);
+        window.addEventListener("load", () => {
+          if (window.refreshCalendarBlocking) {
+            window.refreshCalendarBlocking(selectedProperty).catch(console.error);
+          }
+        });
     </script>
 
 
