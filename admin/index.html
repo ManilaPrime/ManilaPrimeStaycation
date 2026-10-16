@@ -36,15 +36,15 @@
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
-  <!-- ================= AUTH GATE (LOGIN SCREEN) ================= -->
+  <!-- Auth Screen -->
   <div id="auth-gate" class="fixed inset-0 z-50 flex items-center justify-center bg-charcoal-dark p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gray-100">
       <div class="text-center mb-6">
         <div class="w-16 h-16 rounded-2xl bg-yellow text-charcoal flex items-center justify-center text-2xl font-bold mx-auto mb-3 shadow-md">
           MP
         </div>
-        <h1 class="text-2xl font-bold font-serif text-charcoal" id="form-mode-title">Host Admin Portal</h1>
-        <p class="text-xs text-gray-500 mt-1">Sign in with your Manila Prime host credentials</p>
+        <h1 class="text-2xl font-bold font-serif text-charcoal" id="form-mode-title">Staff Dashboard</h1>
+        <p class="text-xs text-gray-500 mt-1">Sign in with your Manila Prime staff credentials</p>
       </div>
 
       <div id="login-error-msg" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs items-start gap-2"></div>
@@ -98,7 +98,7 @@
 
       <div class="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2 text-center">
         <button type="button" id="toggle-auth-mode-btn" class="text-xs text-yellow-darker hover:underline font-semibold">
-          First time here? Register Host Account
+          First time here? Create Staff Account
         </button>
         <a href="/" class="text-xs text-gray-400 hover:text-charcoal transition-colors">
           &larr; Back to Public Website
@@ -107,7 +107,7 @@
     </div>
   </div>
 
-  <!-- ================= MAIN ADMIN DASHBOARD ================= -->
+  <!-- Dashboard -->
   <div id="admin-app" class="hidden flex-1 flex flex-col md:flex-row">
     
     <!-- Sidebar -->
@@ -244,7 +244,7 @@
               <input 
                 type="text" 
                 id="admin-reply-input" 
-                placeholder="Type your response as Host..." 
+                placeholder="Type your response as Manila Prime Staff..." 
                 class="flex-1 bg-gray-50 border border-gray-200 focus:border-yellow focus:bg-white rounded-xl px-4 py-2 text-sm outline-none"
               />
               <button type="submit" class="bg-yellow hover:bg-yellow-dark text-charcoal font-bold px-4 py-2 rounded-xl text-sm transition-transform active:scale-95 shadow">

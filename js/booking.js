@@ -306,7 +306,7 @@ async function handleBookingSubmission(e) {
   const submitBtn = document.getElementById("submit-booking-btn");
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Locking Reservation...`;
+    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Holding your dates...`;
   }
 
   try {
@@ -352,7 +352,7 @@ async function handleBookingSubmission(e) {
     alert(err.message || "Failed to submit booking. Please try again.");
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = `Confirm & Proceed to Payment`;
+      submitBtn.innerHTML = `Continue to Payment`;
     }
   }
 }
@@ -402,7 +402,7 @@ async function handlePaymentProofSubmission(e) {
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Submitting Proof...`;
+    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Submitting Payment Reference...`;
   }
 
   try {
@@ -431,7 +431,7 @@ async function handlePaymentProofSubmission(e) {
     alert("Failed to submit payment proof: " + err.message);
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = `Submit Payment Proof`;
+      submitBtn.innerHTML = `Submit Payment Reference`;
     }
   }
 }

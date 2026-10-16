@@ -1,5 +1,5 @@
 // js/ai-chat.js
-// AI Chat Assistant with Live Human Host Fallback & Hand-off
+// Manila Prime Chat Assistant with staff hand-off
 
 import { db, ensureVisitorAuth, API_BASE_URL, getUnitsCatalog } from "./firebase-app.js";
 import { 
@@ -23,27 +23,26 @@ let chatUnsubscribe = null;
 let cachedUnits = [];
 
 const STAYCATION_KNOWLEDGE = `
-You are the friendly, professional virtual concierge for Manila Prime Staycation, a luxury condo staycation business located at Shore Residences, Seaside Boulevard, Pasay City, Metro Manila (near SM Mall of Asia).
+You are the helpful chat assistant for Manila Prime Staycation, welcoming guests to cozy, fully furnished condo units at Shore Residences (Shore 1, Shore 2, and Shore 3) in Pasay City — right beside SM Mall of Asia and MOA Arena.
 
-Key Information:
-- Properties: Shore 1, Shore 2, and Shore 3 Residences.
-- Check-in Time: 2:00 PM (Strict condo security protocol).
-- Check-out Time: 12:00 PM.
-- Early check-in/late check-out: Subject to availability and approval from the host.
-- Typical Nightly Rates: ₱1,899 to ₱2,399 depending on unit & dates.
-- Capacity: Up to 4 guests per unit (Base rate covers 2 guests; extra guest fee is ₱350/night).
-- Inclusions: High-speed Fiber WiFi, Smart TV with free Netflix, Air conditioning, Refrigerator, Microwave, Rice Cooker, Induction Cooker, Hot & Cold Shower.
-- Swimming Pool: Resort-style pools. Pool pass is ₱150/head on regular days, ₱300/head on holidays (paid directly to the building admin). Pools are closed on Mondays for cleaning.
-- Parking: Paid guest parking available in the building basement and open lots (around ₱50 for first 4 hours, ₱300 overnight).
-- Security Deposit: ₱1,000 incidental deposit, fully refunded upon checkout inspection.
-- Payment Methods: GCash, Maya, and Bank Transfer (BDO, BPI).
-- Pets: Strictly not allowed by condo building administration.
-- Smoking: Strictly prohibited inside units; designated smoking area at ground floor.
+Tone & Persona:
+- Warm, polite, hospitable, and conversational — like a helpful friend or staff messaging a guest on Viber or Messenger.
+- NEVER sound like a generic robotic AI or textbook. Do NOT say "As an AI...", "I am an artificial intelligence", or "Feel free to inquire". Always speak naturally as "we" or "our staff at Manila Prime".
+- Keep responses short (2 to 4 sentences), helpful, and direct.
 
-Guidelines:
-- Keep answers concise, helpful, and warm.
-- If the guest wants to book, tell them they can select their dates on the Booking section of the website.
-- If the guest asks for custom discounts, special requests (parties/events), expresses a complaint, or asks to speak with a person, let them know you can connect them directly to a live human host immediately.
+Stay Details:
+- Location: Shore Residences, Seaside Boulevard, Pasay City (walking distance to SM Mall of Asia).
+- Check-in: 2:00 PM.
+- Check-out: 12:00 PM (Noon).
+- Early check-in / late check-out: We can accommodate this if the unit is available on your dates, just ask our staff!
+- Nightly Rates: Around ₱1,899 to ₱2,399/night depending on the unit and dates.
+- Capacity: Up to 4 guests (Base rate covers 2 guests; extra guest fee is ₱350/night).
+- Inclusions: Fast fiber WiFi, Smart TV with free Netflix, air conditioning, refrigerator, microwave, rice cooker, induction cooker with cookware, hot & cold shower, and fresh towels/linens.
+- Swimming Pools: Resort pool passes are ₱150 per guest on regular days and ₱300 on holidays (paid directly to the building admin). Pools are closed on Mondays for regular maintenance.
+- Parking: Available in the building basement and open outdoor parking lots (around ₱50 for first 4 hours, ₱300 overnight).
+- Security Deposit: ₱1,000 refundable incidental deposit upon check-in, returned upon check-out after room inspection.
+- Payment Methods: GCash, Maya, or Bank Transfer (BDO, BPI).
+- Building Rules: No pets allowed by condo admin; strictly non-smoking inside units (designated smoking area on the ground level).
 `;
 
 async function initAiChat() {
@@ -59,13 +58,12 @@ if (document.readyState === "loading") {
 }
 
 function renderChatWidget() {
-  // Floating Action Button
   const launcher = document.createElement("div");
   launcher.id = "mp-chat-launcher";
   launcher.className = "fixed bottom-6 right-6 z-50 flex items-center gap-3";
   launcher.innerHTML = `
     <div id="mp-chat-tooltip" class="hidden sm:flex items-center bg-white text-charcoal text-xs font-semibold px-3 py-2 rounded-xl shadow-lg border border-gray-100 animate-bounce">
-      <span>💬 Need help booking? Ask AI or Host!</span>
+      <span>💬 Have questions? Chat with our team!</span>
     </div>
     <button 
       id="mp-chat-toggle-btn" 
@@ -78,7 +76,6 @@ function renderChatWidget() {
   `;
   document.body.appendChild(launcher);
 
-  // Chat Window Container
   const chatWindow = document.createElement("div");
   chatWindow.id = "mp-chat-window";
   chatWindow.className = "fixed bottom-24 right-4 sm:right-6 w-[92vw] sm:w-[380px] h-[520px] max-h-[80vh] bg-white rounded-3xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none";
@@ -88,20 +85,20 @@ function renderChatWidget() {
       <div class="flex items-center gap-3">
         <div class="relative">
           <div class="w-10 h-10 rounded-full bg-yellow text-charcoal flex items-center justify-center font-bold">
-            <i class="fas fa-robot text-lg" id="chat-header-icon"></i>
+            <i class="fas fa-comments text-lg" id="chat-header-icon"></i>
           </div>
           <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-charcoal rounded-full"></span>
         </div>
         <div>
-          <h3 class="font-bold text-sm" id="chat-header-title">Manila Prime Concierge</h3>
+          <h3 class="font-bold text-sm" id="chat-header-title">Manila Prime Chat Assistant</h3>
           <p class="text-[11px] text-gray-300 flex items-center gap-1.5" id="chat-header-status">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span> Online • Instant Answers
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span> Online • How can we help?
           </p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button id="chat-request-human-header-btn" class="text-xs bg-white/10 hover:bg-yellow hover:text-charcoal text-white px-2.5 py-1 rounded-full transition-colors" title="Switch to Live Human Host">
-          <i class="fas fa-user mr-1"></i> Host
+        <button id="chat-request-human-header-btn" class="text-xs bg-white/10 hover:bg-yellow hover:text-charcoal text-white px-2.5 py-1 rounded-full transition-colors font-medium flex items-center gap-1" title="Chat directly with our staff">
+          <i class="fas fa-user-friends text-[11px]"></i> Chat with Staff
         </button>
         <button id="chat-close-btn" class="text-gray-400 hover:text-white p-1 rounded-lg text-lg leading-none">
           &times;
@@ -109,39 +106,40 @@ function renderChatWidget() {
       </div>
     </div>
 
-    <!-- Live Human Banner (hidden by default) -->
-    <div id="human-active-banner" class="hidden bg-yellow-light border-b border-yellow/30 px-3 py-1.5 text-xs text-charcoal-dark flex items-center justify-between">
-      <span class="font-medium"><i class="fas fa-headset mr-1 text-yellow-dark"></i> Connected to Human Host</span>
-      <span class="text-[10px] bg-yellow font-bold px-1.5 py-0.5 rounded">Live</span>
+    <!-- Live Staff Banner (hidden by default) -->
+    <div id="human-active-banner" class="hidden bg-amber-50 border-b border-amber-200 px-3.5 py-1.5 text-xs text-amber-900 flex items-center justify-between">
+      <span class="font-medium flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Manila Prime Staff is in this chat
+      </span>
+      <span class="text-[10px] bg-amber-200 font-bold px-2 py-0.5 rounded text-amber-900">Direct Chat</span>
     </div>
 
     <!-- Messages Container -->
     <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50/60 text-sm">
-      <!-- Greeting message -->
       <div class="flex gap-2.5 items-start">
-        <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold">
+        <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold shadow-xs">
           MP
         </div>
-        <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-gray-800 max-w-[85%]">
-          Hello! Welcome to <strong>Manila Prime Staycation</strong> ✨<br><br>
-          I'm your AI concierge. Feel free to ask about unit rates, availability, pool rules, or tap below:
+        <div class="bg-white p-3.5 rounded-2xl rounded-tl-none shadow-xs border border-gray-100 text-gray-800 max-w-[85%] leading-relaxed text-xs">
+          Hi! Welcome to <strong>Manila Prime Staycation</strong> at Shore Residences 👋<br><br>
+          I'm your <strong>Chat Assistant</strong>. Ask me anything about our units, rates, or pool rules—or tap below to message our staff directly:
         </div>
       </div>
     </div>
 
     <!-- Quick Chips -->
     <div id="chat-quick-chips" class="px-3 py-2 bg-white border-t border-gray-100 flex gap-1.5 overflow-x-auto shrink-0 no-scrollbar">
-      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-2.5 py-1 rounded-full whitespace-nowrap transition-colors" data-text="What are your rates?">
-        💰 Rates
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are your unit rates?">
+        💰 Unit Rates
       </button>
-      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-2.5 py-1 rounded-full whitespace-nowrap transition-colors" data-text="Pool access and fees?">
-        🏊 Pool Rules
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="How does pool access work and what are the fees?">
+        🏊 Pool Info
       </button>
-      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-2.5 py-1 rounded-full whitespace-nowrap transition-colors" data-text="Check-in and check-out time?">
-        ⏰ Check-in Time
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are your check-in and check-out times?">
+        ⏰ Check-in / Out
       </button>
-      <button class="chip-btn text-xs bg-yellow/20 hover:bg-yellow text-charcoal font-semibold px-2.5 py-1 rounded-full whitespace-nowrap transition-colors" data-action="talk-to-human">
-        🙋 Speak to Host
+      <button class="chip-btn text-xs bg-yellow/20 hover:bg-yellow text-charcoal font-semibold px-3 py-1.5 rounded-full whitespace-nowrap transition-colors" data-action="talk-to-human">
+        💬 Chat with Staff
       </button>
     </div>
 
@@ -150,7 +148,7 @@ function renderChatWidget() {
       <input 
         type="text" 
         id="chat-user-input" 
-        placeholder="Ask a question..." 
+        placeholder="Type a message or question..." 
         autocomplete="off" 
         class="flex-1 bg-gray-50 border border-gray-200 focus:border-yellow focus:bg-white rounded-full px-4 py-2 text-sm text-charcoal outline-none transition-all"
       />
@@ -173,7 +171,7 @@ function renderChatWidget() {
 
   toggleBtn.onclick = () => toggleChatWindow();
   closeBtn.onclick = () => toggleChatWindow(false);
-  humanHeaderBtn.onclick = () => requestHumanHost();
+  humanHeaderBtn.onclick = () => requestStaff();
 
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -188,7 +186,7 @@ function renderChatWidget() {
   chatWindow.querySelectorAll(".chip-btn").forEach(chip => {
     chip.onclick = () => {
       if (chip.getAttribute("data-action") === "talk-to-human") {
-        requestHumanHost();
+        requestStaff();
       } else {
         const text = chip.getAttribute("data-text");
         handleUserMessage(text);
@@ -216,28 +214,20 @@ function toggleChatWindow(forceState) {
   }
 }
 
-/**
- * Handle incoming user message
- */
 async function handleUserMessage(text) {
   appendMessage("user", text);
-
-  // Save to Firestore guest chat session
   await recordChatMessage("user", text);
 
-  // Detect if user is asking for a person/human
   const isAskingHuman = /\b(human|agent|host|person|call|speak|talk to someone|staff|owner)\b/i.test(text);
   if (isAskingHuman && !isHumanMode) {
-    await requestHumanHost(text);
+    await requestStaff(text);
     return;
   }
 
   if (isHumanMode) {
-    // If in human mode, host is notified, show pending host indicator
     return;
   }
 
-  // AI Response Generation
   showTypingIndicator(true);
   try {
     const aiAnswer = await generateAIAnswer(text);
@@ -247,15 +237,11 @@ async function handleUserMessage(text) {
   } catch (err) {
     console.error("AI error:", err);
     showTypingIndicator(false);
-    appendMessage("assistant", "I'm having a brief connection hiccup. Would you like me to connect you with our live host directly?");
+    appendMessage("assistant", "I'm having a brief connection issue. Would you like me to connect you with Manila Prime Staff directly?");
   }
 }
 
-/**
- * Generate AI Response using Gemini
- */
 async function generateAIAnswer(userQuery) {
-  // Construct listing details context from cached units
   const unitsSummary = cachedUnits.map(u => 
     `- ${u.name} (${u.type}): ₱${u.rate}/night, max ${u.maxOccupancy || 4} guests.`
   ).join("\n");
@@ -272,7 +258,6 @@ Provide a direct, friendly answer:
 `;
 
   try {
-    // Call Cloud Functions AI endpoint
     const response = await fetch(`${API_BASE_URL}/ai/guest-response`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -294,34 +279,30 @@ Provide a direct, friendly answer:
     console.warn("Backend AI route unavailable, using smart local fallback:", e);
   }
 
-  // Smart local fallback for common FAQs
   return getLocalFaqAnswer(userQuery);
 }
 
 function getLocalFaqAnswer(query) {
   const q = query.toLowerCase();
   if (q.includes("rate") || q.includes("price") || q.includes("cost") || q.includes("magkano")) {
-    return "Our studio units start from ₱1,899/night up to ₱2,399/night depending on unit and dates. Each unit comfortably accommodates up to 4 guests with full amenities and Netflix included!";
+    return "Our cozy studio units range from ₱1,899 to ₱2,399 per night depending on your dates. Each unit comfortably fits up to 4 guests and comes with fast fiber WiFi, Netflix, clean hotel-grade linens, and a full kitchen! You can check exact dates in the booking section above.";
   }
   if (q.includes("pool") || q.includes("swimming")) {
-    return "Shore Residences features expansive resort pools! Pool passes are ₱150/guest regular days and ₱300 on holidays, payable directly to the admin. Note that pools are closed Mondays for routine maintenance.";
+    return "Yes! Guests can access the resort pools at Shore Residences. Pool passes are ₱150 per person on regular weekdays/weekends and ₱300 on holidays (settled directly at the building admin counter). Heads up that pools are closed on Mondays for regular cleaning.";
   }
   if (q.includes("checkin") || q.includes("check in") || q.includes("time") || q.includes("checkout")) {
-    return "Standard Check-in is at 2:00 PM and Check-out is at 12:00 PM. Early check-in or late check-out is subject to unit availability.";
+    return "Check-in starts at 2:00 PM and check-out is by 12:00 PM (noon). If you need early check-in or late check-out, just send us a message and we'll check if the unit is available for you!";
   }
   if (q.includes("pet") || q.includes("dog") || q.includes("cat")) {
-    return "Unfortunately, building regulations strictly prohibit pets inside the units.";
+    return "As much as we love pets, the Shore Residences building administration strictly prohibits pets inside the towers.";
   }
   if (q.includes("park") || q.includes("car")) {
-    return "Yes! Pay parking is available in the basement and outdoor lots at Shore Residences (around ₱50 for first 4 hours, ₱300 overnight).";
+    return "Yes, there is pay parking available in the building basement and outdoor open lots (around ₱50 for the first 4 hours, and ₱300 for overnight parking).";
   }
-  return "I'm here to help! You can check all available units and live calendar dates right in the booking section above, or click 'Speak to Host' to chat directly with our team!";
+  return "We're here to help! Feel free to check our available units and live calendar in the booking section above, or tap 'Chat with Staff' to message our team directly.";
 }
 
-/**
- * Switch session to Live Human Host
- */
-export async function requestHumanHost(initialQuery = "") {
+export async function requestStaff(initialQuery = "") {
   isHumanMode = true;
   await ensureVisitorAuth();
 
@@ -331,38 +312,35 @@ export async function requestHumanHost(initialQuery = "") {
   const headerStatus = document.getElementById("chat-header-status");
 
   if (banner) banner.classList.remove("hidden");
-  if (headerIcon) headerIcon.className = "fas fa-user-tie text-lg";
-  if (headerTitle) headerTitle.textContent = "Live Host (Manila Prime)";
-  if (headerStatus) headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Host Notified • Standing By`;
+  if (headerIcon) headerIcon.className = "fas fa-user-friends text-lg";
+  if (headerTitle) headerTitle.textContent = "Manila Prime Staff";
+  if (headerStatus) headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span> Staff Notified • Connecting`;
 
-  appendMessage("system", "🔔 Live Host Requested! Our property team has been notified via Discord and will reply to you right here shortly.");
+  appendMessage("system", "👋 We've notified our staff. Someone from Manila Prime Staff will reply right here in just a moment!");
 
   try {
     const chatRef = doc(db, "guest-chats", chatId);
     await setDoc(chatRef, {
       id: chatId,
       status: "needs_human",
-      lastInquiry: initialQuery || "Guest requested live human host assistance.",
+      lastInquiry: initialQuery || "Guest requested staff assistance.",
       updatedAt: serverTimestamp(),
       platform: "website"
     }, { merge: true });
 
-    // Send discord notification to host
+    // Send discord notification to staff
     await fetch(`${API_BASE_URL}/sendDiscordNotification`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        content: `🚨 **Live Guest Chat Request!**\nA website visitor has asked to speak with a human host.\n**Chat ID:** \`${chatId}\`\n**Last Message:** "${initialQuery || 'Needs host assistance'}"\n*Open your Admin Dashboard to reply live!*`
+        content: `🚨 **Live Guest Chat Request!**\nA website visitor has asked to speak with staff.\n**Chat ID:** \`${chatId}\`\n**Last Message:** "${initialQuery || 'Needs staff assistance'}"\n*Open Staff Dashboard to reply live!*`
       })
     }).catch(() => {});
   } catch (e) {
-    console.warn("Error notifying host:", e);
+    console.warn("Error notifying staff:", e);
   }
 }
 
-/**
- * Listen for replies from Host in Admin Dashboard
- */
 function listenToChatUpdates() {
   if (chatUnsubscribe) chatUnsubscribe();
 
@@ -377,7 +355,6 @@ function listenToChatUpdates() {
     }
 
     if (data.messages && Array.isArray(data.messages)) {
-      // Find latest message from host
       const latestMsg = data.messages[data.messages.length - 1];
       if (latestMsg && latestMsg.sender === "host" && !latestMsg.renderedInClient) {
         appendMessage("host", latestMsg.text);
@@ -418,37 +395,40 @@ function appendMessage(sender, text) {
   if (sender === "user") {
     msgDiv.className = "flex justify-end";
     msgDiv.innerHTML = `
-      <div class="bg-charcoal text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[85%]">
+      <div class="bg-charcoal text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[85%] text-xs leading-relaxed">
         ${escapeHtml(text)}
       </div>
     `;
   } else if (sender === "host") {
     msgDiv.className = "flex gap-2.5 items-start";
     msgDiv.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold shadow-sm">
-        <i class="fas fa-user-tie"></i>
+      <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold shadow-xs">
+        <i class="fas fa-user-friends text-xs"></i>
       </div>
-      <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-yellow/40 text-charcoal max-w-[85%]">
-        <div class="text-[10px] text-yellow-dark font-bold uppercase mb-0.5">Host Manila Prime</div>
-        ${escapeHtml(text)}
+      <div class="bg-amber-50/70 p-3 rounded-2xl rounded-tl-none shadow-xs border border-yellow/30 text-charcoal max-w-[85%]">
+        <div class="text-[10px] text-yellow-darker font-bold tracking-wide uppercase mb-1 flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Manila Prime Staff
+        </div>
+        <div class="text-xs text-gray-800 leading-relaxed">${escapeHtml(text)}</div>
       </div>
     `;
   } else if (sender === "system") {
     msgDiv.className = "flex justify-center my-1";
     msgDiv.innerHTML = `
-      <div class="bg-yellow-light/80 text-charcoal-dark border border-yellow/30 text-xs px-3 py-1.5 rounded-full text-center">
+      <div class="bg-amber-50 text-amber-900 border border-amber-200 text-xs px-3.5 py-1.5 rounded-full text-center font-medium shadow-2xs">
         ${text}
       </div>
     `;
   } else {
-    // assistant
+    // Manila Prime Chat Assistant
     msgDiv.className = "flex gap-2.5 items-start";
     msgDiv.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold shadow-sm">
+      <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold shadow-xs">
         MP
       </div>
-      <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-gray-800 max-w-[85%]">
-        ${escapeHtml(text).replace(/\n/g, "<br>")}
+      <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-xs border border-gray-100 text-gray-800 max-w-[85%]">
+        <div class="text-[10px] text-gray-400 font-semibold mb-1">Manila Prime Chat Assistant</div>
+        <div class="text-xs text-gray-800 leading-relaxed">${escapeHtml(text).replace(/\n/g, "<br>")}</div>
       </div>
     `;
   }
@@ -486,3 +466,5 @@ function escapeHtml(str) {
   div.textContent = str;
   return div.innerHTML;
 }
+
+export { requestStaff as requestHumanHost };

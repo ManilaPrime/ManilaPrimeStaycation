@@ -1,6 +1,5 @@
 // admin/admin.js
-// Manila Prime Staycation Host Admin Portal
-// Manages Units, In-Browser Canvas WebP Image Uploads, Bookings/Payments Approval, and Live Chats
+// Manila Prime Staycation Staff Dashboard
 
 import { 
   db, 
@@ -156,13 +155,13 @@ function setupAuthListeners() {
       if (isRegisterMode) {
         if (confirmPasswordGroup) confirmPasswordGroup.classList.remove("hidden");
         if (submitBtn) submitBtn.textContent = "Create Account & Enter Dashboard";
-        if (formModeTitle) formModeTitle.textContent = "Register Host Account";
+        if (formModeTitle) formModeTitle.textContent = "Create Staff Account";
         toggleAuthModeBtn.textContent = "Already have an account? Sign In";
       } else {
         if (confirmPasswordGroup) confirmPasswordGroup.classList.add("hidden");
         if (submitBtn) submitBtn.textContent = "Sign In to Dashboard";
-        if (formModeTitle) formModeTitle.textContent = "Host Admin Portal";
-        toggleAuthModeBtn.textContent = "First time here? Register Host Account";
+        if (formModeTitle) formModeTitle.textContent = "Staff Dashboard";
+        toggleAuthModeBtn.textContent = "First time here? Create Staff Account";
       }
     };
   }
@@ -228,7 +227,7 @@ function setupAuthListeners() {
       let userCred;
       if (isRegisterMode) {
         userCred = await createUserWithEmailAndPassword(auth, email, password);
-        showToast("Host account created successfully!", "success");
+        showToast("Staff account created successfully!", "success");
       } else {
         userCred = await signInWithEmailAndPassword(auth, email, password);
         showToast("Welcome to Manila Prime Admin!", "success");
@@ -963,9 +962,9 @@ function renderChatList() {
         <div class="flex items-center justify-between mb-1">
           <span class="font-bold text-xs text-charcoal truncate">Guest (${c.id.substring(c.id.length - 5)})</span>
           ${isNeedsHuman ? `
-            <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded animate-pulse">Needs Host</span>
+            <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded animate-pulse">Needs Staff</span>
           ` : `
-            <span class="text-[10px] text-gray-400">${c.status || 'ai'}</span>
+            <span class="text-[10px] text-gray-400">${c.status === 'needs_human' ? 'Needs Staff' : c.status === 'human_active' ? 'Staff Active' : 'Chat Assistant'}</span>
           `}
         </div>
         <p class="text-xs text-gray-500 line-clamp-1">${c.lastMessage || 'Started conversation'}</p>
@@ -1024,7 +1023,7 @@ function openActiveChat(chatId) {
             'bg-white border border-gray-200 text-gray-700'
           }">
             <div class="text-[9px] uppercase tracking-wider mb-1 opacity-70">
-              ${isHost ? 'You (Host)' : isUser ? 'Guest' : 'AI Assistant'}
+              ${isHost ? 'Manila Prime Staff (You)' : isUser ? 'Guest' : 'Chat Assistant'}
             </div>
             ${m.text}
           </div>

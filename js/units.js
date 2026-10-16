@@ -20,7 +20,7 @@ export async function initUnitsSection() {
   container.innerHTML = `
     <div class="col-span-full py-16 text-center">
       <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-yellow border-t-transparent"></div>
-      <p class="mt-4 text-gray-500 font-medium">Loading luxury units...</p>
+      <p class="mt-4 text-gray-500 font-medium">Loading available units...</p>
     </div>
   `;
 
@@ -288,7 +288,7 @@ export function openUnitModal(unit) {
         <div>
           <h4 class="font-bold text-charcoal mb-2">About this unit</h4>
           <p class="text-gray-600 leading-relaxed text-sm md:text-base">
-            ${unit.description || "Experience premier comfort and relaxation in our modern furnished unit located in the heart of Pasay City, steps away from SM Mall of Asia and entertainment centers."}
+            ${unit.description || "Cozy, fully furnished studio unit at Shore Residences in Pasay City. Just a short walk from SM Mall of Asia, MOA Arena, and SMX Convention Center."}
           </p>
         </div>
 
