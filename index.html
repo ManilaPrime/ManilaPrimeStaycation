@@ -630,1934 +630,353 @@
                 </div>
             </div>
             
-    <!-- Units Section (IMPROVED: grid + card template + modal + "load more") -->
+        <!-- Units Section (Dynamic from Firestore with Local Cache) -->
     <section id="details" class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 relative inline-block yellow-border pb-4">
-                    Our Properties
-                </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Choose from our collection of premium accommodations, from luxury units to comfortable bedspaces, all designed for your perfect stay.
-                </p>
-            </div>
-
-            <!-- Controls: (Add filters/sort here later if needed) -->
-            <div class="flex items-center justify-between mb-6">
-                <div class="text-sm text-gray-600">Showing <span id="shown-count">0</span> of <span id="total-count">0</span> units</div>
-                <div class="flex items-center gap-3">
-                    <!-- Example simple sort (non-functional placeholder) -->
-                    <select id="sort-select" class="border rounded-md px-3 py-2 text-sm">
-                        <option value="recommended">Recommended</option>
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Units grid: responsive, good for many units.
-                 Use square images (1:1) with object-cover so they stay consistent.
-                 Add new units by duplicating the .unit-card block below. -->
-            <div id="units-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-per-page="6">
-                <!-- Unit card template (example: 1586) -->
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_595">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_595.png" alt="595 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">595 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed + Sofa Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_595.png" alt="595 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">595 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed + Sofa Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1537">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1537.png" alt="1567 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1537 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1537.png" alt="1537 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1537 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1567">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1567.png" alt="1567 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1567 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1567.png" alt="1567 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1567 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1569">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1569.png" alt="1569 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1569 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1569.png" alt="1569 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1569 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1583">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1583.png" alt="1583 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1583 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1583.png" alt="1583 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1583 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1585">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1585.png" alt="1585 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1585 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1585" alt="1585 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1585 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1586">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1586.png" alt="1586 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1586 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed + Sofa Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1586.png" alt="1586 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1586 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed + Sofa Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                
-                <!-- Unit card template (example: 1839) -->
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TC2_1839">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TC2_1839.png" alt="1839 Shore 1 Tower C2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1839 Shore 1 Tower C2</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Spacious, elegantly designed unit with enhanced views — great for extended stays and business travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Double Bed + Sofa Bed</li>
-                            <li class="flex items-center"><i class="fas fa-city w-5 text-yellow-darker mr-2"></i>Amenities View</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TC2_1839.png" alt="1839 Shore 1 Tower C2" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1839 Shore 1 Tower C2</h3>
-                                    <p class="text-gray-600 mb-4">Spacious and elegantly designed unit with enhanced amenities and views. Ideal for extended stays and business travelers.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Double Bed + Sofa Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-city mr-2 text-yellow-darker"></i>Amenities View</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S1TD_963">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S1TD_963.png" alt="963 Shore 1 Tower D" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">963 Shore 1 Tower D</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S1TD_963.png" alt="1586 Shore 1 Tower D" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">963 Shore 1 Tower D</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S2T1_1407">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S2T1_1407.png" alt="1407 Shore 2 Tower 1" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">1407 Shore 2 Tower 1</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>Max 2 Guests, add 300 per exceeding guest (can add up to two guests only)</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S2T1_1407.png" alt="1407 Shore 2 Tower 1" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">1407 Shore 2 Tower 1</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>Max 2 Guests, add 300 per exceeding guest (can add up to two guests only)</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S3T1_372">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S3T1_372.png" alt="372 Shore 3 Tower 1" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">372 Shore 3 Tower 1</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>2 Queen Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S3T1_372.png" alt="372 Shore 3 Tower 1" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">372 Shore 3 Tower 1</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>2 Queen Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S3T1_525">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S3T1_525.png" alt="525 Shore 3 Tower 1" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">525 Shore 3 Tower 1</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed + Sofa Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S3T1_525.png" alt="525 Shore 3 Tower 1" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">525 Shore 3 Tower 1</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed + Sofa Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="S3T1_855">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/S3T1_855.png" alt="855 Shore 3 Tower 1" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">855 Shore 3 Tower 1</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Flagship unit featuring modern amenities and premium comfort. Ideal for couples or solo travelers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-users w-5 text-yellow-darker mr-2"></i>2-4 Guests</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Queen Bed + Sofa Bed</li>
-                            <li class="flex items-center"><i class="fas fa-bath w-5 text-yellow-darker mr-2"></i>Cozy Living Room + Netflix</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱1,999</p>
-                                <p class="text-xs text-gray-500">per night</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <!-- Hidden full-detail HTML (will be cloned into modal on "View") -->
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/S3T1_855.png" alt="855 Shore 3 Tower 1" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">855 Shore 3 Tower 1</h3>
-                                    <p class="text-gray-600 mb-4">Our flagship unit featuring modern amenities, stylish furnishings, and premium comfort. Perfect for couples or solo travelers seeking luxury.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>2-4 Guests</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Queen Bed + Sofa Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-bath mr-2 text-yellow-darker"></i>Cozy Living Room + Netflix</div>
-                                        <div class="flex items-center"><i class="fas fa-utensils mr-2 text-yellow-darker"></i>Full Kitchen</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱1,999 <span class="text-sm text-gray-500">per night</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                
-                <!-- Unit card template (example: Bedspace) -->
-                <article class="unit-card bg-white rounded-xl shadow-lg overflow-hidden" data-unit-id="bedspace">
-                    <div class="image-container aspect-square">
-                        <img loading="lazy" src="images/bedspace.jpg" alt="Bedspace" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-start justify-between">
-                            <h3 class="text-lg font-serif font-bold">Bedspace Options</h3>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">Available</span>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mt-2">Budget-friendly accommodation perfect for solo travelers, students, and backpackers.</p>
-
-                        <ul class="mt-3 text-sm text-gray-700 space-y-1">
-                            <li class="flex items-center"><i class="fas fa-user w-5 text-yellow-darker mr-2"></i>1 Guest</li>
-                            <li class="flex items-center"><i class="fas fa-bed w-5 text-yellow-darker mr-2"></i>Single Bed</li>
-                            <li class="flex items-center"><i class="fas fa-lock w-5 text-yellow-darker mr-2"></i>Personal Storage</li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xl font-bold text-yellow-darker">₱4,999</p>
-                                <p class="text-xs text-gray-500">per month</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="px-3 py-2 rounded-md bg-transparent border border-yellow text-yellow text-sm" onclick="openUnitModal(this.closest('.unit-card'))">
-                                    View
-                                </button>
-                                <a href="#booking" class="px-3 py-2 rounded-md bg-yellow text-charcoal text-sm">Book</a>
-                            </div>
-                        </div>
-
-                        <div class="unit-full hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <img src="images/bedspace.jpg" alt="Bedspace" class="w-full h-64 object-cover rounded-md">
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-serif font-bold mb-2">Bedspace Options</h3>
-                                    <p class="text-gray-600 mb-4">Budget-friendly accommodation perfect for solo travelers, students, and backpackers. Shared facilities with private sleeping space and personal storage.</p>
-                                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div class="flex items-center"><i class="fas fa-user mr-2 text-yellow-darker"></i>1 Guest</div>
-                                        <div class="flex items-center"><i class="fas fa-bed mr-2 text-yellow-darker"></i>Single Bed</div>
-                                        <div class="flex items-center"><i class="fas fa-users mr-2 text-yellow-darker"></i>Shared Facilities</div>
-                                        <div class="flex items-center"><i class="fas fa-lock mr-2 text-yellow-darker"></i>Personal Storage</div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="text-2xl font-bold text-yellow-darker">₱4,999 <span class="text-sm text-gray-500">per month</span></p>
-                                        <a href="#booking" class="inline-block mt-3 bg-yellow px-4 py-2 rounded-md text-charcoal">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-        <section id="features" class="py-16 bg-white">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl shadow-md p-6 feature-card">
-                    <div class="bg-yellow-light w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-map-marker-alt text-yellow-darker text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-center mb-4">Prime Location</h3>
-                    <p class="text-gray-600 text-center mb-4">
-                        Located in the heart of Manila with easy access to major attractions
-                    </p>
-                    <p class="text-sm text-center text-yellow-darker font-medium">
-                        Close to shopping malls, restaurants, and business districts
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 feature-card">
-                    <div class="bg-yellow-light w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-bed text-yellow-darker text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-center mb-4">Comfortable Space</h3>
-                    <p class="text-gray-600 text-center mb-4">
-                        Thoughtfully designed space with quality furnishings
-                    </p>
-                    <p class="text-sm text-center text-yellow-darker font-medium">
-                        Perfect for couples, solo travelers, or business trips
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 feature-card">
-                    <div class="bg-yellow-light w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-concierge-bell text-yellow-darker text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-center mb-4">Premium Amenities</h3>
-                    <p class="text-gray-600 text-center mb-4">
-                        Access to building amenities including pool and fitness center
-                    </p>
-                    <p class="text-sm text-center text-yellow-darker font-medium">
-                        24/7 security and convenient self check-in
-                    </p>
-                </div>
-            </div>
-            
-            <div class="mt-16">
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2">
-                        <div class="p-8 md:p-12">
-                            <h3 class="text-2xl font-serif font-bold mb-6">Unit Inclusions</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Comfortable Beds</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Sofa</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Smart TV</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Netflix</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>High-Speed WiFi</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Air Conditioning</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Hot & Cold Shower</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Toiletries</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Fresh Towels</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Dining Area</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Refrigerator</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Microwave</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Electric Kettle</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Basic Kitchenware</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Work Desk</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check text-yellow-dark mr-3"></i>
-                                    <span>Wardrobe</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="image-container h-full">
-                            <!-- Replace with your image -->
-                             <img src="images/lobby.jfif" alt="Lobby" class="responsive">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Amenities Section -->
-    <section id="amenities" class="py-16 bg-pattern">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 relative inline-block yellow-border pb-4">
-                    Building Amenities
-                </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Enjoy exclusive access to premium amenities during your stay.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl overflow-hidden shadow-lg amenity-icon">
-                    <div class="bg-charcoal-light relative image-container">
-                        <!-- Replace with your image -->
-                        <img src="images/Pool.jfif" alt="Pool" class="responsive">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-4">Swimming Pool</h3>
-                        <p class="text-gray-600 mb-4">
-                            Relax and unwind in our refreshing swimming pool with stunning views.
-                        </p>
-                        <div class="flex items-center text-sm text-yellow-darker font-medium">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            <span>Open daily from 6AM to 10PM</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl overflow-hidden shadow-lg amenity-icon">
-                    <div class="bg-charcoal-light relative image-container">
-                        <!-- Replace with your image -->
-                        <img src="images/Gym.jfif" alt="Gym" class="responsive">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-4">Fitness Center</h3>
-                        <p class="text-gray-600 mb-4">
-                            Stay fit during your stay with our well-equipped fitness center.
-                        </p>
-                        <div class="flex items-center text-sm text-yellow-darker font-medium">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            <span>24/7 access for guests</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl overflow-hidden shadow-lg amenity-icon">
-                    <div class="bg-charcoal-light relative image-container">
-                        <!-- Replace with your image -->
-                        <img src="images/Garden.jfif" alt="Garden" class="responsive">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-4">Garden & Leisure Areas</h3>
-                        <p class="text-gray-600 mb-4">
-                            Enjoy beautifully landscaped gardens and outdoor leisure spaces.
-                        </p>
-                        <div class="flex items-center text-sm text-yellow-darker font-medium">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            <span>Perfect for relaxation and fresh air</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Location Section -->
-    <section id="location" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 relative inline-block yellow-border pb-4">
-                    Prime Location
-                </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Perfectly positioned in the heart of Manila with easy access to major attractions and business districts.
-                </p>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-xl overflow-hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2">
-                    <div class="p-8 md:p-12">
-                        <h3 class="text-2xl font-serif font-bold mb-6">Nearby Attractions</h3>
-                        <ul class="space-y-4 feature-list">
-                            <li>
-                                <i class="fas fa-shopping-bag text-yellow-dark"></i>
-                                <span class="font-medium">Shopping Malls</span> - Within walking distance
-                            </li>
-                            <li>
-                                <i class="fas fa-utensils text-yellow-dark"></i>
-                                <span class="font-medium">Restaurants & Cafés</span> - Numerous options nearby
-                            </li>
-                            <li>
-                                <i class="fas fa-building text-yellow-dark"></i>
-                                <span class="font-medium">Business Districts</span> - Easy access
-                            </li>
-                            <li>
-                                <i class="fas fa-landmark text-yellow-dark"></i>
-                                <span class="font-medium">Cultural Attractions</span> - Short drive away
-                            </li>
-                            <li>
-                                <i class="fas fa-subway text-yellow-dark"></i>
-                                <span class="font-medium">Public Transportation</span> - Convenient access
-                            </li>
-                            <li>
-                                <i class="fas fa-hospital text-yellow-dark"></i>
-                                <span class="font-medium">Medical Facilities</span> - Nearby
-                            </li>
-                            <li>
-                                <i class="fas fa-store text-yellow-dark"></i>
-                                <span class="font-medium">Convenience Stores</span> - Within the building
-                            </li>
-                        </ul>
-                        
-                        <div class="mt-8">
-                            <a href="https://maps.app.goo.gl/c9DLGQJCrnJ7igkU7" target="_blank" class="bg-yellow hover:bg-yellow-dark text-charcoal font-medium py-2 px-6 rounded-md transition-colors duration-300 btn-yellow inline-flex items-center">
-                                <i class="fas fa-map-marker-alt mr-2"></i> View on Google Maps
-                            </a>
-                        </div>
-                    </div>
-                    <div class="h-96 md:h-auto">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.802548850001!2d120.98!3d14.58!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM0JzQ4LjAiTiAxMjDCsDU4JzQ4LjAiRQ!5e0!3m2!1sen!2sph!4v1620000000000!5m2!1sen!2sph" 
-                            width="100%" 
-                            height="100%" 
-                            style="border:0;" 
-                            allowfullscreen="" 
-                            loading="lazy"
-                            class="rounded-xl">
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials & Gallery Section -->
-    <section id="testimonials" class="py-16 bg-pattern">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 relative inline-block yellow-border pb-4">
-                    Guest Experiences
-                </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    See what our guests have to say about their stay at Manila Prime Staycation.
-                </p>
-            </div>
-            
-            <!-- Testimonials -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                <div class="bg-white rounded-xl shadow-lg p-8 relative testimonial-card">
-                    <i class="fas fa-quote-left quote-icon"></i>
-                    <div class="mb-6">
-                        <div class="flex text-yellow-dark mb-2">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <h4 class="text-xl font-medium">Exceptional Stay!</h4>
-                    </div>
-                    <p class="text-gray-600 mb-6">
-                        "The unit was spotlessly clean and beautifully decorated. The location is perfect - close to everything we needed. The host was very responsive and accommodating. Will definitely stay here again!"
-                    </p>
-                    <div class="flex items-center">
-                        <div class="bg-yellow-light w-12 h-12 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-yellow-darker font-bold text-lg">MR</span>
-                        </div>
-                        <div>
-                            <p class="font-medium">Maria Rodriguez</p>
-                            <p class="text-sm text-gray-500">May 2023</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-8 relative testimonial-card">
-                    <i class="fas fa-quote-left quote-icon"></i>
-                    <div class="mb-6">
-                        <div class="flex text-yellow-dark mb-2">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <h4 class="text-xl font-medium">Perfect for Business Travel</h4>
-                    </div>
-                    <p class="text-gray-600 mb-6">
-                        "I stayed here during a business trip and it was exactly what I needed. Fast WiFi, comfortable workspace, and great amenities. The self check-in process was smooth and convenient."
-                    </p>
-                    <div class="flex items-center">
-                        <div class="bg-yellow-light w-12 h-12 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-yellow-darker font-bold text-lg">JT</span>
-                        </div>
-                        <div>
-                            <p class="font-medium">James Thompson</p>
-                            <p class="text-sm text-gray-500">July 2023</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-8 relative testimonial-card">
-                    <i class="fas fa-quote-left quote-icon"></i>
-                    <div class="mb-6">
-                        <div class="flex text-yellow-dark mb-2">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                        </div>
-                        <h4 class="text-xl font-medium">Great Value for Money</h4>
-                    </div>
-                    <p class="text-gray-600 mb-6">
-                        "This place exceeded our expectations! The pool and gym access was a huge plus. The unit had everything we needed and more. The location is very convenient with lots of restaurants and shops nearby."
-                    </p>
-                    <div class="flex items-center">
-                        <div class="bg-yellow-light w-12 h-12 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-yellow-darker font-bold text-lg">AL</span>
-                        </div>
-                        <div>
-                            <p class="font-medium">Anna Lee</p>
-                            <p class="text-sm text-gray-500">September 2023</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Featured Video -->
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-16">
-                <div class="grid grid-cols-1 md:grid-cols-2">
-                    <div class="p-8 md:p-12">
-                        <h3 class="text-2xl font-serif font-bold mb-4">Featured Vlog</h3>
-                        <p class="text-gray-600 mb-6">
-                            Take a virtual tour of our Manila Prime Staycation unit and see what makes it special. This video showcases our comfortable space, amenities, and the overall experience you can expect during your stay.
-                        </p>
-                        <div class="flex items-center text-yellow-darker font-medium mb-6">
-                            <i class="fas fa-video mr-2"></i>
-                            <span>Watch our featured guest vlog</span>
-                        </div>
-                        <a href="https://www.facebook.com/watch/?v=1109604244609390&rdid=3DBZw8ctKsyjqyXH" target="_blank" class="bg-facebook hover:bg-facebook-dark text-white font-medium py-2 px-6 rounded-md transition-colors duration-300 btn-facebook inline-flex items-center">
-                            <i class="fab fa-facebook-f mr-2"></i> Watch on Facebook
-                        </a>
-                    </div>
-                    <div class="h-96 md:h-auto bg-gray-100 flex items-center justify-center">
-                        <div class="text-center p-8">
-                            <i class="fab fa-facebook text-facebook text-5xl mb-4"></i>
-                            <h4 class="text-xl font-medium mb-2">Facebook Reel</h4>
-                            <p class="text-gray-600 mb-4">Click the button to watch our featured video on Facebook</p>
-                            <a href="https://www.facebook.com/watch/?v=1109604244609390&rdid=pbFNyliFnCIN4o8U" target="_blank" class="text-facebook hover:underline font-medium">
-                                <i class="fas fa-external-link-alt mr-1"></i> Open Video
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Photo Gallery -->
             <div class="text-center mb-10">
-                <h3 class="text-2xl font-serif font-bold mb-6">Photo Gallery</h3>
-                <p class="text-gray-600 max-w-3xl mx-auto mb-8">
-                    Browse through our gallery to see more of our beautiful space and amenities.
+                <span class="text-xs font-bold text-yellow-dark uppercase tracking-widest block mb-2">Exclusive Accommodations</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-charcoal mb-4 relative inline-block yellow-border pb-4">
+                    Our Featured Properties
+                </h2>
+                <p class="text-base text-gray-600 max-w-2xl mx-auto">
+                    Experience luxury staycations at Shore Residences with hotel-grade linens, resort pools, high-speed fiber internet, and full amenities.
                 </p>
             </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(1)">
-                    <img src="images/1.png" alt="Kitchen" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
+
+            <!-- Tower Filter Pills & Count -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-gray-100 pb-4">
+                <!-- Filters -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                    <button type="button" class="tower-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-charcoal text-white shadow-sm" data-filter="all">
+                        All Properties
+                    </button>
+                    <button type="button" class="tower-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-gray-100 text-gray-700 hover:bg-gray-200" data-filter="Shore 1">
+                        Shore 1 Residences
+                    </button>
+                    <button type="button" class="tower-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-gray-100 text-gray-700 hover:bg-gray-200" data-filter="Shore 2">
+                        Shore 2 Residences
+                    </button>
+                    <button type="button" class="tower-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-gray-100 text-gray-700 hover:bg-gray-200" data-filter="Shore 3">
+                        Shore 3 Residences
+                    </button>
                 </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(2)">
-                    <img src="images/2.png" alt="Pillows" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
-                </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(3)">
-                    <img src="images/3.png" alt="TV" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
-                </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(4)">
-                    <img src="images/4.png" alt="Sculpture" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
-                </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(5)">
-                    <img src="images/5.png" alt="Feather" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
-                </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(6)">
-                    <img src="images/6.png" alt="Utensils" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
-                </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(7)">
-                    <img src="images/7.png" alt="Bed" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
-                </div>
-                
-                <div class="gallery-item rounded-xl overflow-hidden shadow-md" onclick="openModal(8)">
-                    <img src="images/8.png" alt="Sofa" class="responsive">
-                    <div class="gallery-overlay">
-                        <p class="text-sm">Click to enlarge</p>
-                    </div>
+
+                <!-- Unit Count -->
+                <div class="text-xs text-gray-500 shrink-0 font-medium">
+                    Showing <span id="shown-count" class="font-bold text-charcoal">0</span> of <span id="total-count" class="font-bold text-charcoal">0</span> active units
                 </div>
             </div>
-            
-            <!-- Image Modal -->
-            <div id="imageModal" class="modal">
-                <span class="modal-close" onclick="closeModal()">&times;</span>
-                <img class="modal-content" id="modalImage">
+
+            <!-- Dynamic Units Grid (Populated via js/units.js) -->
+            <div id="units-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Loaded dynamically from Firestore -->
             </div>
         </div>
     </section>
 
-    <!-- House Rules Section -->
-    <section id="rules" class="py-16 bg-white">
+    <!-- Booking Section with Live Calendar & Option A Payment -->
+    <section id="booking" class="py-16 bg-gradient-to-b from-gray-50 to-white">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 relative inline-block yellow-border pb-4">
-                    House Rules
+            <div class="text-center mb-10">
+                <span class="text-xs font-bold text-yellow-dark uppercase tracking-widest block mb-2">Instant Online Reservation</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-charcoal mb-4 relative inline-block yellow-border pb-4">
+                    Book Your Staycation
                 </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    To ensure a comfortable and pleasant stay for everyone, please observe the following guidelines.
+                <p class="text-base text-gray-600 max-w-2xl mx-auto">
+                    Select your preferred unit, check real-time availability on the calendar below, and reserve instantly with zero double-booking risk.
                 </p>
             </div>
-            
-            <!-- Rules Tabs -->
-            <div class="flex flex-wrap justify-center mb-8">
-                <button class="rules-tab active px-6 py-3 rounded-tl-lg rounded-bl-lg font-medium transition-all duration-300" data-tab="general">
-                    <i class="fas fa-home mr-2"></i> General Rules
-                </button>
-                <button class="rules-tab px-6 py-3 font-medium transition-all duration-300" data-tab="checkin">
-                    <i class="fas fa-clock mr-2"></i> Check-in/Check-out
-                </button>
-                <button class="rules-tab px-6 py-3 font-medium transition-all duration-300" data-tab="safety">
-                    <i class="fas fa-shield-alt mr-2"></i> Safety & Security
-                </button>
-                <button class="rules-tab px-6 py-3 rounded-tr-lg rounded-br-lg font-medium transition-all duration-300" data-tab="amenities">
-                    <i class="fas fa-swimming-pool mr-2"></i> Amenities Usage
-                </button>
-            </div>
-            
-            <!-- General Rules Content -->
-            <div id="general-rules" class="rules-content active">
-                <div class="bg-white rounded-xl shadow-lg p-8">
-                    <div class="flex items-center mb-8">
-                        <div class="bg-yellow-light p-4 rounded-full mr-4">
-                            <i class="fas fa-exclamation-circle text-yellow-darker text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-serif font-bold">General House Rules</h3>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-smoking-ban text-charcoal text-xl"></i>
+
+            <div class="max-w-5xl mx-auto">
+                <!-- STEP 1: CALENDAR & BOOKING FORM -->
+                <div id="booking-step-form" class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                    <form id="direct-booking-form">
+                        <div class="grid grid-cols-1 lg:grid-cols-12">
+                            
+                            <!-- Left: Unit & Live Availability Calendar (7 cols) -->
+                            <div class="lg:col-span-7 p-6 sm:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 relative">
+                                <!-- Loading overlay -->
+                                <div id="cal-loading-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-xs z-20 flex items-center justify-center hidden">
+                                    <div class="text-center">
+                                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-yellow border-t-transparent"></div>
+                                        <p class="text-xs text-gray-500 font-semibold mt-2">Checking Live Dates...</p>
+                                    </div>
                                 </div>
+
+                                <!-- Unit Selector -->
+                                <div class="mb-6">
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">1. Select Unit</label>
+                                    <div class="relative">
+                                        <select id="booking-unit-select" class="w-full bg-gray-50 border border-gray-200 focus:border-yellow focus:bg-white rounded-2xl px-4 py-3 text-sm font-semibold text-charcoal outline-none transition-colors appearance-none cursor-pointer">
+                                            <!-- Dynamically filled -->
+                                        </select>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between mt-2 text-xs text-gray-500">
+                                        <span id="cal-selected-unit-name" class="font-medium text-charcoal truncate mr-2">Shore 1 Tower C2 - 595</span>
+                                        <span id="cal-selected-unit-rate" class="font-bold text-yellow-dark shrink-0">₱1,899 / night</span>
+                                    </div>
+                                </div>
+
+                                <!-- Live Interactive Calendar -->
                                 <div>
-                                    <h4 class="text-lg font-semibold mb-2">No Smoking</h4>
-                                    <p class="text-gray-600">
-                                        Smoking is strictly prohibited inside the unit. A cleaning fee of ₱2,000 will be charged for violations.
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">2. Select Dates</label>
+                                            <span class="text-xs text-gray-400">Click Check-in, then Check-out</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" id="cal-prev-month" class="w-8 h-8 rounded-full border border-gray-200 hover:border-yellow flex items-center justify-center text-xs text-gray-600 hover:text-charcoal transition-colors">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <span id="cal-month-title" class="text-sm font-bold text-charcoal min-w-[130px] text-center">October 2026</span>
+                                            <button type="button" id="cal-next-month" class="w-8 h-8 rounded-full border border-gray-200 hover:border-yellow flex items-center justify-center text-xs text-gray-600 hover:text-charcoal transition-colors">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Weekday Labels -->
+                                    <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-gray-400 uppercase mb-2">
+                                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                    </div>
+
+                                    <!-- Days Grid -->
+                                    <div id="cal-days-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2">
+                                        <!-- Dynamically generated days -->
+                                    </div>
+
+                                    <!-- Calendar Legend -->
+                                    <div class="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-3 h-3 rounded-full bg-white border border-gray-200"></span> Available
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-3 h-3 rounded-full bg-red-100 border border-red-300"></span> Booked
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-3 h-3 rounded-full bg-yellow"></span> Selected
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Guest Details & Price Summary (5 cols) -->
+                            <div class="lg:col-span-5 p-6 sm:p-8 bg-gray-50/60 flex flex-col justify-between">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">3. Guest Details</label>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <input type="text" id="booking-first-name" required placeholder="First Name *" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3.5 py-2.5 text-xs text-charcoal outline-none shadow-xs" />
+                                            </div>
+                                            <div>
+                                                <input type="text" id="booking-last-name" required placeholder="Last Name *" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3.5 py-2.5 text-xs text-charcoal outline-none shadow-xs" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <input type="email" id="booking-email" required placeholder="Email Address *" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3.5 py-2.5 text-xs text-charcoal outline-none shadow-xs" />
+                                        </div>
+
+                                        <div>
+                                            <input type="tel" id="booking-phone" required placeholder="Mobile / GCash No. (e.g. 0917XXXXXXX) *" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3.5 py-2.5 text-xs text-charcoal outline-none shadow-xs" />
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">Adults (Age 13+)</label>
+                                                <input type="number" id="booking-adults" min="1" max="4" value="2" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3 py-2 text-xs text-charcoal outline-none shadow-xs" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">Children (Age 0-12)</label>
+                                                <input type="number" id="booking-children" min="0" max="3" value="0" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3 py-2 text-xs text-charcoal outline-none shadow-xs" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <textarea id="booking-requests" rows="2" placeholder="Special requests (optional: arrival time, etc.)" class="w-full bg-white border border-gray-200 focus:border-yellow rounded-xl px-3.5 py-2 text-xs text-charcoal outline-none shadow-xs"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price Breakdown Box -->
+                                    <div id="booking-summary-box" class="mt-5 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-2 hidden">
+                                        <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <span>Check-in:</span>
+                                            <strong id="summary-checkin" class="text-charcoal">-</strong>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <span>Check-out:</span>
+                                            <strong id="summary-checkout" class="text-charcoal">-</strong>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <span>Stay Duration:</span>
+                                            <span id="summary-nights" class="font-semibold text-charcoal">0 nights</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <span>Base Accommodation:</span>
+                                            <span id="summary-base-rate" class="font-semibold text-charcoal">₱0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <span>Extra Guest Surcharge:</span>
+                                            <span id="summary-extra-guests" class="font-semibold text-charcoal">₱0</span>
+                                        </div>
+                                        <div class="pt-2 border-t border-gray-100 flex items-center justify-between text-sm">
+                                            <strong class="text-charcoal font-serif">Total Stay Amount:</strong>
+                                            <strong id="summary-total-amount" class="text-lg font-bold text-charcoal">₱0</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6">
+                                    <button 
+                                        type="submit" 
+                                        id="submit-booking-btn" 
+                                        class="w-full bg-yellow hover:bg-yellow-dark text-charcoal font-bold py-3.5 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg text-sm flex items-center justify-center gap-2"
+                                    >
+                                        <span>Confirm & Proceed to Payment</span>
+                                        <i class="fas fa-arrow-right text-xs"></i>
+                                    </button>
+                                    <p class="text-[11px] text-gray-400 text-center mt-2 flex items-center justify-center gap-1">
+                                        <i class="fas fa-shield-alt text-green-500"></i> No double-booking guarantee • Direct host rate
                                     </p>
                                 </div>
                             </div>
+
                         </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-volume-mute text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Quiet Hours</h4>
-                                    <p class="text-gray-600">
-                                        Please observe quiet hours from 10:00 PM to 8:00 AM. Respect other residents in the building.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-users text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Guest Limit</h4>
-                                    <p class="text-gray-600">
-                                        Only registered guests are allowed to stay overnight. Maximum occupancy is strictly enforced.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-paw text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">No Pets</h4>
-                                    <p class="text-gray-600">
-                                        We love animals, but pets are not allowed in the unit to maintain cleanliness and prevent allergies.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-glass-cheers text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">No Parties</h4>
-                                    <p class="text-gray-600">
-                                        Parties and events are not permitted. The unit is for residential use only.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-broom text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Cleanliness</h4>
-                                    <p class="text-gray-600">
-                                        Please maintain cleanliness during your stay. Dispose of trash properly in designated areas.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-            </div>
-            
-            <!-- Check-in/Check-out Content -->
-            <div id="checkin-rules" class="rules-content hidden">
-                <div class="bg-white rounded-xl shadow-lg p-8">
-                    <div class="flex items-center mb-8">
-                        <div class="bg-yellow-light p-4 rounded-full mr-4">
-                            <i class="fas fa-clock text-yellow-darker text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-serif font-bold">Check-in & Check-out Policies</h3>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold mb-4 rule-category">Check-in Process</h4>
-                            <div class="space-y-6">
-                                <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                                    <div class="flex items-start">
-                                        <div class="rule-icon">
-                                            <i class="fas fa-clock text-charcoal text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-lg font-medium mb-2">Standard Check-in Time</h5>
-                                            <p class="text-gray-600">
-                                                Check-in time is from 2:00 PM onwards. Early check-in may be available upon request, subject to availability.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                                    <div class="flex items-start">
-                                        <div class="rule-icon">
-                                            <i class="fas fa-key text-charcoal text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-lg font-medium mb-2">Self Check-in</h5>
-                                            <p class="text-gray-600">
-                                                Detailed check-in instructions will be provided before your arrival. Please follow them carefully.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                                    <div class="flex items-start">
-                                        <div class="rule-icon">
-                                            <i class="fas fa-id-card text-charcoal text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-lg font-medium mb-2">ID Verification</h5>
-                                            <p class="text-gray-600">
-                                                All guests must provide valid ID for verification purposes. This is for security and building regulations.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <h4 class="text-xl font-semibold mb-4 rule-category">Check-out Process</h4>
-                            <div class="space-y-6">
-                                <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                                    <div class="flex items-start">
-                                        <div class="rule-icon">
-                                            <i class="fas fa-door-open text-charcoal text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-lg font-medium mb-2">Standard Check-out Time</h5>
-                                            <p class="text-gray-600">
-                                                Check-out time is by 12:00 PM (noon). Late check-out may be available upon request, subject to availability.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                                    <div class="flex items-start">
-                                        <div class="rule-icon">
-                                            <i class="fas fa-tasks text-charcoal text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-lg font-medium mb-2">Check-out Procedure</h5>
-                                            <p class="text-gray-600">
-                                                Please ensure all windows are closed, lights and appliances are turned off, and the door is locked when leaving.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                                    <div class="flex items-start">
-                                        <div class="rule-icon">
-                                            <i class="fas fa-key text-charcoal text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-lg font-medium mb-2">Key Return</h5>
-                                            <p class="text-gray-600">
-                                                Return keys as instructed in the check-out information. Lost keys will incur a replacement fee.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Safety & Security Content -->
-            <div id="safety-rules" class="rules-content hidden">
-                <div class="bg-white rounded-xl shadow-lg p-8">
-                    <div class="flex items-center mb-8">
-                        <div class="bg-yellow-light p-4 rounded-full mr-4">
-                            <i class="fas fa-shield-alt text-yellow-darker text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-serif font-bold">Safety & Security Guidelines</h3>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-lock text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Lock Up</h4>
-                                    <p class="text-gray-600">
-                                        Always lock doors and windows when leaving the unit, even for short periods. Your security is important to us.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-user-secret text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Visitor Policy</h4>
-                                    <p class="text-gray-600">
-                                        All visitors must be registered with building security. Unregistered guests will not be allowed entry.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-fire-extinguisher text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Fire Safety</h4>
-                                    <p class="text-gray-600">
-                                        Familiarize yourself with emergency exits and fire safety equipment. Do not tamper with smoke detectors.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-bolt text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Electrical Safety</h4>
-                                    <p class="text-gray-600">
-                                        Turn off all appliances when not in use. Do not overload electrical outlets with multiple devices.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-phone-alt text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Emergency Contacts</h4>
-                                    <p class="text-gray-600">
-                                        Emergency contact information is provided in the unit. Please contact us immediately for any security concerns.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-key text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Access Cards/Keys</h4>
-                                    <p class="text-gray-600">
-                                        Do not share access cards or keys with non-registered guests. Report lost cards/keys immediately.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Amenities Usage Content -->
-            <div id="amenities-rules" class="rules-content hidden">
-                <div class="bg-white rounded-xl shadow-lg p-8">
-                    <div class="flex items-center mb-8">
-                        <div class="bg-yellow-light p-4 rounded-full mr-4">
-                            <i class="fas fa-swimming-pool text-yellow-darker text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-serif font-bold">Amenities Usage Guidelines</h3>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-swimming-pool text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Swimming Pool</h4>
-                                    <p class="text-gray-600">
-                                        <span class="font-medium">Hours:</span> 6:00 AM - 10:00 PM<br>
-                                        <span class="font-medium">Rules:</span> Shower before entering. No diving. Children must be supervised at all times. No food or glass containers in the pool area.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-dumbbell text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Fitness Center</h4>
-                                    <p class="text-gray-600">
-                                        <span class="font-medium">Hours:</span> 24/7 access<br>
-                                        <span class="font-medium">Rules:</span> Use equipment properly. Clean equipment after use. Wear appropriate athletic footwear. No children under 16 without adult supervision.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-tree text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Garden & Leisure Areas</h4>
-                                    <p class="text-gray-600">
-                                        <span class="font-medium">Hours:</span> 6:00 AM - 10:00 PM<br>
-                                        <span class="font-medium">Rules:</span> Keep noise levels reasonable. Clean up after yourself. No smoking. Respect the plants and facilities.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg p-6 shadow-md rule-card">
-                            <div class="flex items-start">
-                                <div class="rule-icon">
-                                    <i class="fas fa-elevator text-charcoal text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Elevators & Common Areas</h4>
-                                    <p class="text-gray-600">
-                                        <span class="font-medium">Rules:</span> Keep common areas clean. Do not block elevators or hallways. Be considerate of other residents. Follow all posted signs and instructions.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 p-6 bg-yellow-light rounded-lg">
-                        <h4 class="text-lg font-semibold mb-2 flex items-center">
-                            <i class="fas fa-info-circle mr-2 text-yellow-darker"></i>
-                            Important Note
-                        </h4>
-                        <p class="text-gray-700">
-                            Your access to building amenities is a privilege. Failure to follow the rules may result in restricted access. Please be respectful of other residents and maintain the facilities for everyone's enjoyment.
+
+                <!-- STEP 2: OPTION A PAYMENT INSTRUCTIONS -->
+                <div id="booking-step-payment" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-10 max-w-2xl mx-auto hidden">
+                    <div class="text-center mb-6">
+                        <span class="bg-yellow-light text-charcoal font-bold text-xs px-3 py-1 rounded-full uppercase">Step 2 of 2: Payment</span>
+                        <h3 class="text-2xl font-bold font-serif text-charcoal mt-2">Complete Your Reservation</h3>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Your reservation is temporarily held for 30 minutes. Please send payment to confirm.
                         </p>
                     </div>
+
+                    <!-- Booking Summary Pill -->
+                    <div class="p-4 bg-gray-50 rounded-2xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs border border-gray-100">
+                        <div>
+                            <span class="text-gray-400 block">Booking Reference:</span>
+                            <span id="payment-booking-ref" class="font-mono font-bold text-sm text-charcoal">MP-XXXXXX</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block">Unit:</span>
+                            <span id="payment-unit-name" class="font-semibold text-charcoal">Shore 1</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block">Dates:</span>
+                            <span id="payment-dates" class="font-semibold text-charcoal">Dates</span>
+                        </div>
+                        <div class="sm:text-right">
+                            <span class="text-gray-400 block">Total Amount:</span>
+                            <span id="payment-total-amount" class="font-bold text-base text-yellow-dark">₱0</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details (QR & Bank details) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center p-6 bg-yellow-light/30 rounded-2xl border border-yellow/30 mb-6">
+                        <div class="text-center">
+                            <div class="w-44 h-44 bg-white p-2 rounded-2xl shadow-sm border border-gray-200 mx-auto mb-2 flex items-center justify-center">
+                                <img id="display-payment-qr-img" src="mp.png" alt="GCash QR Code" class="max-w-full max-h-full object-contain" />
+                            </div>
+                            <span class="text-[11px] font-bold text-charcoal uppercase tracking-wider block">Scan with GCash / Maya / Bank</span>
+                        </div>
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <span class="text-gray-500 block">GCash Account Name:</span>
+                                <strong class="text-charcoal text-sm" id="display-gcash-name">Manila Prime Staycation</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block">GCash Mobile Number:</span>
+                                <strong class="text-charcoal text-sm font-mono" id="display-gcash-number">09850600545</strong>
+                            </div>
+                            <div class="pt-2 border-t border-yellow/30">
+                                <span class="text-gray-500 block">Security Deposit:</span>
+                                <span class="text-charcoal font-medium">₱1,000 refundable security deposit payable upon check-in.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Proof Form -->
+                    <form id="payment-proof-form" class="space-y-4">
+                        <input type="hidden" id="payment-booking-id" />
+
+                        <div>
+                            <label class="block text-xs font-bold text-charcoal mb-1">
+                                GCash / Bank Transaction Reference Number *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="payment-ref-number" 
+                                required 
+                                placeholder="e.g. 901234567890" 
+                                class="w-full bg-gray-50 border border-gray-200 focus:border-yellow focus:bg-white rounded-xl px-4 py-2.5 text-sm font-mono outline-none"
+                            />
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-charcoal mb-1">
+                                Upload Screenshot Proof of Payment (Optional but speeds up verification)
+                            </label>
+                            <input 
+                                type="file" 
+                                id="payment-receipt-file" 
+                                accept="image/*" 
+                                class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-yellow file:text-charcoal hover:file:bg-yellow-dark cursor-pointer"
+                            />
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            id="submit-proof-btn" 
+                            class="w-full bg-yellow hover:bg-yellow-dark text-charcoal font-bold py-3.5 rounded-2xl transition-all shadow-md text-sm mt-3"
+                        >
+                            Submit Payment Proof & Confirm Booking
+                        </button>
+                    </form>
                 </div>
-            </div>
-            
-            <!-- Rules Summary -->
-            <div class="mt-10 bg-white rounded-xl shadow-md p-6">
-                <div class="flex items-center mb-4">
-                    <i class="fas fa-exclamation-circle text-yellow-dark text-xl mr-3"></i>
-                    <h3 class="text-xl font-semibold">Compliance with Rules</h3>
+
+                <!-- STEP 3: SUCCESS CONFIRMATION -->
+                <div id="booking-step-success" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12 max-w-xl mx-auto text-center hidden">
+                    <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 shadow-sm animate-bounce">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase text-green-600 tracking-wider">Payment Proof Submitted</span>
+                    <h3 class="text-2xl font-bold font-serif text-charcoal mt-1 mb-3">Reservation Received!</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-6">
+                        Thank you for booking with Manila Prime Staycation! Our team is verifying your payment reference. We will send your official check-in voucher and building clearance via SMS/Email within 15–30 minutes.
+                    </p>
+                    <div class="p-4 bg-gray-50 rounded-2xl text-xs text-left mb-6 space-y-1.5 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500">Need urgent assistance?</span>
+                            <a href="tel:09850600545" class="font-bold text-yellow-dark hover:underline">09850600545</a>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500">Check-in Time:</span>
+                            <span class="font-bold text-charcoal">2:00 PM</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500">Building Location:</span>
+                            <span class="font-bold text-charcoal">Shore Residences, Pasay City</span>
+                        </div>
+                    </div>
+                    <a href="#details" class="inline-block bg-charcoal hover:bg-black text-white text-xs font-semibold px-6 py-3 rounded-full transition-colors">
+                        Browse More Units
+                    </a>
                 </div>
-                <p class="text-gray-600 mb-4">
-                    By booking and staying at Manila Prime Staycation, you agree to comply with all house rules. Failure to follow these guidelines may result in additional charges, early termination of your stay without refund, or being banned from future bookings.
-                </p>
-                <p class="text-gray-600">
-                    We appreciate your cooperation in maintaining a pleasant environment for all guests. If you have any questions about our policies, please don't hesitate to contact us.
-                </p>
+
             </div>
         </div>
     </section>
 
-    <!-- Live  Section -->
-    <section id="calendar" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 relative inline-block yellow-border pb-4">
-                    Check Availability
-                </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    View real-time availability for all our properties and select your preferred dates.
-                </p>
-            </div>
-            
-            <!--  Selector -->
-            <div class="max-w-4xl mx-auto mb-8">
-                <div class="flex flex-wrap justify-center gap-4 mb-8">
-                    <button class="property-selector active bg-yellow text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_595">
-                        595 Shore 1 Tower C2 - ₱1,999
-                    </button>
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1537">
-                        1537 Shore 1 Tower C2 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1567">
-                        1567 Shore 1 Tower C2 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1569">
-                        1569 Shore 1 Tower C2 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1583">
-                        1583 Shore 1 Tower C2 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1585">
-                        1585 Shore 1 Tower C2 - ₱1,999
-                    </button>    
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1586">
-                        1586 Shore 1 Tower C2 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TC2_1839">
-                        1839 Shore 1 Tower C2 - ₱1,999                       
-                    </button>
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TD_953">
-                        953 Shore 1 Tower D - ₱1,999
-                    </button>                        
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S1TD_963">
-                        963 Shore 1 Tower D - ₱1,999
-                    </button>    
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S2T1_1407">
-                        1407 Shore 2 Tower 1 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S3T1_372">
-                        372 Shore 3 Tower 1 - ₱1,999
-                    </button>    
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S3T1_525">
-                        525 Shore 3 Tower 1 - ₱1,999
-                    </button>    
-
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="S3T1_855">
-                        855 Shore 3 Tower 1 - ₱1,999
-                    </button>    
-                    
-                    <button class="property-selector bg-gray-200 text-gray-700 hover:bg-yellow hover:text-charcoal px-6 py-3 rounded-lg font-medium transition-all duration-300" data-property="bedspace">
-                        Bedspace - ₱4,999
-                    </button>
-
-                    
-                </div>
-                
-                <!-- Calendar Widget -->
-                <div class="bg-white rounded-xl shadow-lg p-8">
-                    <div id="calendar-widget" class="calendar-container">
-                        <!-- Calendar Header -->
-                        <div class="flex items-center justify-between mb-6">
-                            <button id="prev-month" class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                                <i class="fas fa-chevron-left text-xl"></i>
-                            </button>
-                            <h3 id="calendar-month" class="text-2xl font-bold text-center"></h3>
-                            <button id="next-month" class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                                <i class="fas fa-chevron-right text-xl"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Calendar Grid -->
-                        <div class="grid grid-cols-7 gap-2 mb-4">
-                            <div class="text-center font-medium text-gray-600 py-2">Sun</div>
-                            <div class="text-center font-medium text-gray-600 py-2">Mon</div>
-                            <div class="text-center font-medium text-gray-600 py-2">Tue</div>
-                            <div class="text-center font-medium text-gray-600 py-2">Wed</div>
-                            <div class="text-center font-medium text-gray-600 py-2">Thu</div>
-                            <div class="text-center font-medium text-gray-600 py-2">Fri</div>
-                            <div class="text-center font-medium text-gray-600 py-2">Sat</div>
-                        </div>
-                        
-                        <div id="calendar-days" class="grid grid-cols-7 gap-2">
-                            <!-- Calendar days will be generated by JavaScript -->
-                        </div>
-                        
-                        <!-- Legend -->
-                        <div class="flex flex-wrap justify-center gap-6 mt-8 pt-6 border-t border-gray-200">
-                            <div class="flex items-center">
-                                <div class="w-4 h-4 bg-green-500 rounded mr-2"></div>
-                                <span class="text-sm text-gray-600">Available</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
-                                <span class="text-sm text-gray-600">Booked</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
-                                <span class="text-sm text-gray-600">Selected</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-4 h-4 bg-gray-300 rounded mr-2"></div>
-                                <span class="text-sm text-gray-600">Past Date</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Selected Dates Display -->
-                    <div id="selected-dates" class="mt-8 p-6 bg-yellow-light rounded-lg hidden">
-                        <h4 class="text-lg font-semibold mb-4">Selected Dates</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <p class="text-sm text-gray-600">Check-in</p>
-                                <p id="checkin-date" class="font-medium">-</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Check-out</p>
-                                <p id="checkout-date" class="font-medium">-</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Total Nights</p>
-                                <p id="total-nights" class="font-medium">-</p>
-                            </div>
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-yellow-300">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="text-sm text-gray-600">Total Cost</p>
-                                    <p id="total-cost" class="text-2xl font-bold text-yellow-darker">₱0</p>
-                                </div>
-                                <button id="proceed-booking" class="bg-yellow hover:bg-yellow-dark text-charcoal font-medium py-3 px-8 rounded-lg transition-colors duration-300 btn-yellow">
-                                    Proceed to Book
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-    <!-- Booking Section -->
-    <section id="booking" class="py-16 bg-pattern">
-        <div class="container mx-auto px-4">
-            <div class="max-w-5xl mx-auto">
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2">
-                        <div class="p-8 md:p-12 bg-charcoal-light text-white">
-                            <div class="mb-8">
-                                <a href="https://www.facebook.com/ManilaPrimeStaycation" target="_blank" class="bg-facebook hover:bg-facebook-dark text-white font-medium py-3 px-8 rounded-md transition-all duration-300 btn-facebook block text-center shadow-lg">
-                                    <i class="fab fa-facebook-f mr-2"></i> Book Your Stay
-                                </a>
-                            </div>
-                            <div class="space-y-6">
-                                <div>
-                                    <h4 class="text-lg font-medium mb-2 text-yellow">Our Properties</h4>
-                                    <div class="space-y-2">
-                                        <p class="text-white"><span class="font-medium">Premium Studio:</span> ₱1,899/night</p>
-                                        <p class="text-white"><span class="font-medium">Deluxe Studio:</span> ₱2,299/night</p>
-                                        <p class="text-white"><span class="font-medium">Bedspace:</span> ₱899/night</p>
-                                        <p class="text-gray-300"><span class="font-medium">Executive Suite:</span> ₱3,499/night (Coming Soon)</p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-medium mb-2 text-yellow">Check-in/Check-out</h4>
-                                    <p class="text-gray-300">Check-in: 2:00 PM</p>
-                                    <p class="text-gray-300">Check-out: 12:00 PM</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-medium mb-2 text-yellow">Contact</h4>
-                                    <p class="text-gray-300">For immediate assistance:</p>
-                                    <p class="text-white font-medium">09850600545</p>
-                                    <p class="text-white font-medium">primestaycation24@gmail.com</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-medium mb-2 text-yellow">Booking Methods</h4>
-                                    <div class="space-y-3 mt-4">
-                                        <a href="https://calendly.com/primestaycation24/booking" target="_blank" class="bg-yellow hover:bg-yellow-dark text-charcoal font-medium py-2 px-6 rounded-md transition-colors duration-300 btn-yellow block text-center">
-                                            Book via Calendly
-                                        </a>
-                                        <a href="https://www.airbnb.com/calendar/ical/564.ics?s=a8faa917ac36fa13c1a787e056e61a2b&locale=en-GB" target="_blank" class="bg-transparent border border-yellow text-yellow hover:bg-yellow-dark hover:text-charcoal font-medium py-2 px-6 rounded-md transition-colors duration-300 block text-center">
-                                            <i class="fab fa-airbnb mr-2"></i> View Airbnb Calendar
-                                        </a>
-                                        <a href="tel:09850600545" class="bg-transparent border border-yellow text-yellow hover:bg-yellow-dark hover:text-charcoal font-medium py-2 px-6 rounded-md transition-colors duration-300 block text-center">
-                                            Call to Book
-                                        </a>
-                                        <a href="mailto:primestaycation24@gmail.com" class="bg-transparent border border-yellow text-yellow hover:bg-yellow-dark hover:text-charcoal font-medium py-2 px-6 rounded-md transition-colors duration-300 block text-center">
-                                            Email Us
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8 md:p-12">
-                            <h3 class="text-2xl font-serif font-bold mb-6">Calendly Booking</h3>
-                            <div class="calendly-inline-widget" data-url="https://calendly.com/primestaycation24/booking"></div>
-                            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
+<!-- Contact Section -->
     <section id="contact" class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
@@ -2880,431 +1299,12 @@
     </script>
 
 
-    <script>    
-        // Image modal functionality
-        function openModal(imageId) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            
-            // In a real implementation, you would use actual image paths
-            // For this demo, we'll use placeholder images
-            modalImg.src = `https://via.placeholder.com/800x600?text=Gallery+Image+${imageId}`;
-            modal.style.display = "flex";
-            modal.style.alignItems = "center";
-            modal.style.justifyContent = "center";
-        }
-        
-        function closeModal() {
-            document.getElementById('imageModal').style.display = "none";
-        }
-        
-        // Close modal when clicking outside the image
-        window.onclick = function(event) {
-            const modal = document.getElementById('imageModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        
-        // Rules tabs functionality
-        const ruleTabs = document.querySelectorAll('.rules-tab');
-        const ruleContents = document.querySelectorAll('.rules-content');
-        
-        ruleTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs
-                ruleTabs.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                tab.classList.add('active');
-                
-                // Hide all content sections
-                ruleContents.forEach(content => content.classList.remove('active'));
-                
-                // Show the corresponding content
-                const tabId = tab.getAttribute('data-tab');
-                document.getElementById(`${tabId}-rules`).classList.add('active');
-            });
-        });
-        
-        // Carousel functionality
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.carousel-slide');
-        const totalSlides = slides.length;
-        const carouselTrack = document.getElementById('carousel-track');
-        const carouselDots = document.querySelectorAll('.carousel-dot');
-        
-        function updateCarousel() {
-            const translateX = -currentSlide * 100;
-            carouselTrack.style.transform = `translateX(${translateX}%)`;
-            
-            // Update dots
-            carouselDots.forEach((dot, index) => {
-                if (index === currentSlide) {
-                    dot.classList.add('active');
-                    dot.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-                } else {
-                    dot.classList.remove('active');
-                    dot.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
-                }
-            });
-        }
-        
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateCarousel();
-        }
-        
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            updateCarousel();
-        }
-        
-        // Carousel navigation
-        document.querySelector('.carousel-next').addEventListener('click', nextSlide);
-        document.querySelector('.carousel-prev').addEventListener('click', prevSlide);
-        
-        // Carousel dots
-        carouselDots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                currentSlide = index;
-                updateCarousel();
-            });
-        });
-        
-        // Auto-play carousel
-        setInterval(nextSlide, 5000);
-        
-        // Initialize carousel
-        updateCarousel();
-        // Swipe support for mobile
-        let startX = 0;
-        let endX = 0;
-        
-        carouselTrack.addEventListener("touchstart", (e) => {
-            startX = e.touches[0].clientX;
-        });
-        
-        carouselTrack.addEventListener("touchend", (e) => {
-            endX = e.changedTouches[0].clientX;
-            handleSwipe();
-        });
-        
-        function handleSwipe() {
-            if (endX < startX - 50) {
-                // Swipe left → next slide
-                nextSlide();
-            } else if (endX > startX + 50) {
-                // Swipe right → previous slide
-                prevSlide();
-            }
-        }
-
-        
-        // Calendar functionality
-        const currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        let currentYear = currentDate.getFullYear();
-        let selectedProperty = document.querySelector('.property-selector')?.dataset.property || '';
-        let selectedDates = [];
-        let checkInDate = null;
-        let checkOutDate = null;
-        
-        const propertyPrices = {
-            premium: 1899,
-            deluxe: 2299,
-            bedspace: 899
-        };
-        
-        
-        const monthNames = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-
-        async function renderCalendar() {
-          const bookings = await window.getBookingsForUnit(selectedProperty);
-          generateCalendar(currentMonth, currentYear, bookings);
-        }
-        
-        function generateCalendar(month, year, bookings = []) {
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const calendarDays = document.getElementById('calendar-days');
-            const calendarMonth = document.getElementById('calendar-month');
-            
-            calendarMonth.textContent = `${monthNames[month]} ${year}`;
-            calendarDays.innerHTML = '';
-            
-            // Add empty cells for days before the first day of the month
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'h-12';
-                calendarDays.appendChild(emptyDay);
-            }
-            
-            // Add days of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayElement = document.createElement('button');
-                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isPastDate = new Date(year, month, day) < new Date().setHours(0, 0, 0, 0);
-                const isBooked = bookings.some(b => {
-                  const start = new Date(b.start);
-                  const end = new Date(b.end);
-                  const d = new Date(dateString);
-                  return d >= start && d < end; // checkout not blocked
-                });
-                const isSelected = selectedDates.includes(dateString);
-                
-                dayElement.className = 'h-12 w-full rounded-lg text-center font-medium transition-all duration-300 ';
-                dayElement.textContent = day;
-                dayElement.setAttribute('data-date', dateString);
-                
-                if (isPastDate) {
-                    dayElement.className += 'bg-gray-200 text-gray-400 cursor-not-allowed';
-                    dayElement.disabled = true;
-                } else if (isBooked) {
-                    dayElement.className += 'bg-red-500 text-white cursor-not-allowed';
-                    dayElement.disabled = true;
-                } else if (isSelected) {
-                    dayElement.className += 'bg-yellow-500 text-charcoal';
-                } else {
-                    dayElement.className += 'bg-green-500 text-white hover:bg-green-600';
-                    dayElement.addEventListener('click', () => selectDate(dateString));
-                }
-                
-                calendarDays.appendChild(dayElement);
-            }
-            if (window.refreshCalendarBlocking) {
-              window.refreshCalendarBlocking(selectedProperty).catch(console.error);
-            }
-        }
-        
-        function selectDate(dateString) {
-            if (!checkInDate) {
-                // First selection - check-in date
-                checkInDate = dateString;
-                selectedDates = [dateString];
-            } else if (!checkOutDate && dateString > checkInDate) {
-                // Second selection - check-out date
-                checkOutDate = dateString;
-                
-                // Add all dates between check-in and check-out
-                const start = new Date(checkInDate);
-                const end = new Date(checkOutDate);
-                selectedDates = [];
-                
-                for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                    const dateStr = d.toISOString().split('T')[0];
-                    selectedDates.push(dateStr);
-                }
-                
-                updateSelectedDatesDisplay();
-            } else {
-                // Reset selection
-                checkInDate = dateString;
-                checkOutDate = null;
-                selectedDates = [dateString];
-            }
-            
-            renderCalendar().catch(console.error);
-        }
-        
-        function updateSelectedDatesDisplay() {
-            const selectedDatesDiv = document.getElementById('selected-dates');
-            const checkinDateEl = document.getElementById('checkin-date');
-            const checkoutDateEl = document.getElementById('checkout-date');
-            const totalNightsEl = document.getElementById('total-nights');
-            const totalCostEl = document.getElementById('total-cost');
-            
-            if (checkInDate && checkOutDate) {
-                const checkinDate = new Date(checkInDate);
-                const checkoutDate = new Date(checkOutDate);
-                const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
-                const totalCost = nights * propertyPrices[selectedProperty];
-                
-                checkinDateEl.textContent = checkinDate.toLocaleDateString('en-US', { 
-                    weekday: 'short', 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-                checkoutDateEl.textContent = checkoutDate.toLocaleDateString('en-US', { 
-                    weekday: 'short', 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-                totalNightsEl.textContent = `${nights} night${nights > 1 ? 's' : ''}`;
-                totalCostEl.textContent = `₱${totalCost.toLocaleString()}`;
-                
-                selectedDatesDiv.classList.remove('hidden');
-            } else {
-                selectedDatesDiv.classList.add('hidden');
-            }
-        }
-        
-        // Property selector functionality
-        const propertySelectors = document.querySelectorAll('.property-selector');
-        
-        propertySelectors.forEach(selector => {
-            selector.addEventListener('click', () => {
-                // Update active selector
-                propertySelectors.forEach(s => {
-                    s.classList.remove('active', 'bg-yellow', 'text-charcoal');
-                    s.classList.add('bg-gray-200', 'text-gray-700');
-                });
-                
-                selector.classList.add('active', 'bg-yellow', 'text-charcoal');
-                selector.classList.remove('bg-gray-200', 'text-gray-700');
-                
-                // Update selected property
-                selectedProperty = selector.getAttribute('data-property');
-                
-                // Reset selections
-                checkInDate = null;
-                checkOutDate = null;
-                selectedDates = [];
-                
-                // Regenerate calendar
-                renderCalendar().catch(console.error);
-                updateSelectedDatesDisplay();
-            });
-        });
-        
-        // Calendar navigation
-        document.getElementById('prev-month').addEventListener('click', () => {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            renderCalendar().catch(console.error);
-        });
-        
-        document.getElementById('next-month').addEventListener('click', () => {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            renderCalendar().catch(console.error);
-        });
-        
-        // Proceed to booking button
-        document.getElementById('proceed-booking').addEventListener('click', () => {
-            if (checkInDate && checkOutDate) {
-                // In a real app, this would redirect to booking form with selected dates
-                const bookingUrl = `https://calendly.com/primestaycation24/booking?date=${checkInDate}&checkout=${checkOutDate}&property=${selectedProperty}`;
-                window.open(bookingUrl, '_blank');
-            }
-        });
-        
-        // Initialize calendar
-        renderCalendar().catch(console.error);
-        window.addEventListener("load", () => {
-          if (window.refreshCalendarBlocking) {
-            window.refreshCalendarBlocking(selectedProperty).catch(console.error);
-          }
-        });
-    </script>
-
-
-
     
-    <script>
-        //Reset Form after pressing Home
-    document.addEventListener("DOMContentLoaded", function () {
-      const homeLink = document.getElementById("home-link");
-      const form = document.getElementById("contact-form");
-    
-      if (homeLink && form) {
-        homeLink.addEventListener("click", function () {
-          form.reset(); // ✅ Clears the input fields
-        });
-      }
-    });
-    </script>
-
-    <script>
-function openModal(index) {
-    const imgSrc = document.querySelector(`.gallery-item:nth-child(${index}) img`).src;
-    const modal = document.getElementById("imageModal");
-    const modalImg = document.getElementById("modalImage");
-
-    modal.style.display = "block";
-    modalImg.src = imgSrc;
-}
-
-function closeModal() {
-    document.getElementById("imageModal").style.display = "none";
-}
-
-// Close if clicking outside the image
-window.addEventListener("click", function(e) {
-    const modal = document.getElementById("imageModal");
-    const modalImg = document.getElementById("modalImage");
-    if (e.target === modal) {
-        modal.style.display = "none";
-    }
-});
-</script>
-
-<script>
-// Unit Modal Functionality
-function openUnitModal(unitCard) {
-    // Get the full unit details from the hidden div
-    const unitFull = unitCard.querySelector('.unit-full').cloneNode(true);
-    
-    // Create modal if it doesn't exist
-    let modal = document.getElementById('unit-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'unit-modal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content bg-white rounded-xl max-w-4xl mx-auto my-10 p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
-                <button class="modal-close absolute top-4 right-4 text-charcoal hover:text-gray-600 text-3xl font-bold" onclick="closeUnitModal()">
-                    &times;
-                </button>
-                <div id="unit-modal-content"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    
-    // Insert unit details into modal
-    const modalContent = document.getElementById('unit-modal-content');
-    modalContent.innerHTML = '';
-    modalContent.appendChild(unitFull);
-    
-    // Show modal
-    modal.style.display = 'block';
-    
-    // Prevent body scrolling
-    document.body.style.overflow = 'hidden';
-}
-
-function closeUnitModal() {
-    const modal = document.getElementById('unit-modal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Close modal when clicking outside
-window.addEventListener('click', function(event) {
-    const modal = document.getElementById('unit-modal');
-    if (modal && event.target === modal) {
-        closeUnitModal();
-    }
-});
-</script>
-<script src="/calendar/calendar.js" defer></script>
-
-    
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a1f369936f8554',t:'MTc1NDM1MTM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+    <!-- Modernized Module Scripts -->
+    <script type="module" src="/js/firebase-app.js"></script>
+    <script type="module" src="/js/units.js"></script>
+    <script type="module" src="/js/booking.js"></script>
+    <script type="module" src="/js/ai-chat.js"></script>
 </body>
 </html>
 
