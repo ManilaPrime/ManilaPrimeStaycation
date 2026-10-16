@@ -1,5 +1,5 @@
 // js/ai-chat.js
-// Manila Prime Chat Assistant with staff hand-off
+// Manila Prime Chat Assistant with two-way staff hand-off
 
 import { db, ensureVisitorAuth, API_BASE_URL, getUnitsCatalog } from "./firebase-app.js";
 import { 
@@ -18,7 +18,9 @@ if (!chatId) {
   localStorage.setItem("mp_guest_chat_v3", chatId);
 }
 
-let isHumanMode = false;
+let currentMode = "assistant"; // "assistant" | "staff"
+let staffNotifiedForSession = false;
+let staffActive = false;
 let chatUnsubscribe = null;
 let cachedUnits = [];
 
@@ -87,7 +89,7 @@ function renderChatWidget() {
           <div class="w-10 h-10 rounded-full bg-yellow text-charcoal flex items-center justify-center font-bold">
             <i class="fas fa-comments text-lg" id="chat-header-icon"></i>
           </div>
-          <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-charcoal rounded-full"></span>
+          <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-charcoal rounded-full" id="chat-header-dot"></span>
         </div>
         <div>
           <h3 class="font-bold text-sm" id="chat-header-title">Manila Prime Chat Assistant</h3>
@@ -97,21 +99,33 @@ function renderChatWidget() {
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button id="chat-request-human-header-btn" class="text-xs bg-white/10 hover:bg-yellow hover:text-charcoal text-white px-2.5 py-1 rounded-full transition-colors font-medium flex items-center gap-1" title="Chat directly with our staff">
-          <i class="fas fa-user-friends text-[11px]"></i> Chat with Staff
+        <button 
+          id="chat-mode-toggle-btn" 
+          class="text-xs bg-white/10 hover:bg-yellow hover:text-charcoal text-white px-2.5 py-1 rounded-full transition-colors font-medium flex items-center gap-1.5" 
+          title="Chat directly with our staff"
+        >
+          <i class="fas fa-user-friends text-[11px]" id="chat-mode-toggle-icon"></i>
+          <span id="chat-mode-toggle-label">Chat with Staff</span>
         </button>
-        <button id="chat-close-btn" class="text-gray-400 hover:text-white p-1 rounded-lg text-lg leading-none">
+        <button id="chat-close-btn" class="text-gray-400 hover:text-white p-1 rounded-lg text-lg leading-none" title="Close chat">
           &times;
         </button>
       </div>
     </div>
 
-    <!-- Live Staff Banner (hidden by default) -->
+    <!-- Live Staff Banner -->
     <div id="human-active-banner" class="hidden bg-amber-50 border-b border-amber-200 px-3.5 py-1.5 text-xs text-amber-900 flex items-center justify-between">
-      <span class="font-medium flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Manila Prime Staff is in this chat
-      </span>
-      <span class="text-[10px] bg-amber-200 font-bold px-2 py-0.5 rounded text-amber-900">Direct Chat</span>
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-yellow-500" id="staff-banner-dot"></span>
+        <span id="staff-banner-text" class="font-medium">Direct chat with Manila Prime Staff</span>
+      </div>
+      <button 
+        id="banner-switch-assistant-btn" 
+        class="text-[10px] bg-white border border-amber-300 hover:bg-yellow hover:text-charcoal text-amber-900 font-semibold px-2 py-0.5 rounded-full shadow-2xs transition-colors flex items-center gap-1"
+        title="Switch back to Chat Assistant"
+      >
+        <i class="fas fa-robot text-[9px]"></i> Back to Assistant
+      </button>
     </div>
 
     <!-- Messages Container -->
@@ -129,18 +143,7 @@ function renderChatWidget() {
 
     <!-- Quick Chips -->
     <div id="chat-quick-chips" class="px-3 py-2 bg-white border-t border-gray-100 flex gap-1.5 overflow-x-auto shrink-0 no-scrollbar">
-      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are your unit rates?">
-        💰 Unit Rates
-      </button>
-      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="How does pool access work and what are the fees?">
-        🏊 Pool Info
-      </button>
-      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are your check-in and check-out times?">
-        ⏰ Check-in / Out
-      </button>
-      <button class="chip-btn text-xs bg-yellow/20 hover:bg-yellow text-charcoal font-semibold px-3 py-1.5 rounded-full whitespace-nowrap transition-colors" data-action="talk-to-human">
-        💬 Chat with Staff
-      </button>
+      <!-- Injected by renderQuickChips() -->
     </div>
 
     <!-- Input Footer -->
@@ -156,6 +159,7 @@ function renderChatWidget() {
         type="submit" 
         id="chat-send-btn" 
         class="w-9 h-9 bg-yellow hover:bg-yellow-dark text-charcoal rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95 shadow-sm"
+        title="Send message"
       >
         <i class="fas fa-paper-plane text-xs"></i>
       </button>
@@ -166,12 +170,26 @@ function renderChatWidget() {
   // Attach Event Handlers
   const toggleBtn = document.getElementById("mp-chat-toggle-btn");
   const closeBtn = document.getElementById("chat-close-btn");
-  const humanHeaderBtn = document.getElementById("chat-request-human-header-btn");
+  const modeToggleBtn = document.getElementById("chat-mode-toggle-btn");
+  const bannerSwitchBtn = document.getElementById("banner-switch-assistant-btn");
   const form = document.getElementById("chat-input-form");
 
   toggleBtn.onclick = () => toggleChatWindow();
   closeBtn.onclick = () => toggleChatWindow(false);
-  humanHeaderBtn.onclick = () => requestStaff();
+
+  // Two-way mode toggle in header
+  modeToggleBtn.onclick = () => {
+    if (currentMode === "assistant") {
+      switchToStaffMode(true);
+    } else {
+      switchToAssistantMode(true);
+    }
+  };
+
+  // Switch back button in the banner
+  if (bannerSwitchBtn) {
+    bannerSwitchBtn.onclick = () => switchToAssistantMode(true);
+  }
 
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -182,14 +200,161 @@ function renderChatWidget() {
     await handleUserMessage(text);
   };
 
-  // Quick Chips
-  chatWindow.querySelectorAll(".chip-btn").forEach(chip => {
+  renderQuickChips();
+}
+
+export function switchToStaffMode(showNotice = true) {
+  currentMode = "staff";
+
+  const headerIcon = document.getElementById("chat-header-icon");
+  const headerTitle = document.getElementById("chat-header-title");
+  const headerStatus = document.getElementById("chat-header-status");
+  const toggleBtn = document.getElementById("chat-mode-toggle-btn");
+  const toggleIcon = document.getElementById("chat-mode-toggle-icon");
+  const toggleLabel = document.getElementById("chat-mode-toggle-label");
+  const input = document.getElementById("chat-user-input");
+
+  if (headerIcon) headerIcon.className = "fas fa-user-friends text-lg";
+  if (headerTitle) headerTitle.textContent = "Manila Prime Staff";
+  
+  if (headerStatus) {
+    if (staffActive) {
+      headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Staff Active`;
+    } else if (staffNotifiedForSession) {
+      headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Staff Notified • Connecting`;
+    } else {
+      headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Direct Message • Ready`;
+    }
+  }
+
+  // Toggle button now allows switching back to Chat Assistant
+  if (toggleBtn) {
+    toggleBtn.className = "text-xs bg-yellow text-charcoal hover:bg-yellow-dark px-2.5 py-1 rounded-full transition-colors font-semibold flex items-center gap-1.5 shadow-xs";
+    toggleBtn.title = "Switch back to Manila Prime Chat Assistant";
+  }
+  if (toggleIcon) toggleIcon.className = "fas fa-robot text-[11px]";
+  if (toggleLabel) toggleLabel.textContent = "Chat Assistant";
+
+  updateStaffBanner();
+
+  if (input) {
+    input.placeholder = "Message our staff directly...";
+    input.focus();
+  }
+
+  renderQuickChips();
+
+  if (showNotice) {
+    appendMessage("system", "💬 You are in Staff Chat mode. Send a message below and our team will be notified to reply!");
+  }
+}
+
+export function switchToAssistantMode(showNotice = true) {
+  currentMode = "assistant";
+
+  const headerIcon = document.getElementById("chat-header-icon");
+  const headerTitle = document.getElementById("chat-header-title");
+  const headerStatus = document.getElementById("chat-header-status");
+  const toggleBtn = document.getElementById("chat-mode-toggle-btn");
+  const toggleIcon = document.getElementById("chat-mode-toggle-icon");
+  const toggleLabel = document.getElementById("chat-mode-toggle-label");
+  const banner = document.getElementById("human-active-banner");
+  const input = document.getElementById("chat-user-input");
+
+  if (headerIcon) headerIcon.className = "fas fa-comments text-lg";
+  if (headerTitle) headerTitle.textContent = "Manila Prime Chat Assistant";
+  if (headerStatus) {
+    headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span> Online • How can we help?`;
+  }
+
+  // Toggle button allows switching back to Staff
+  if (toggleBtn) {
+    toggleBtn.className = "text-xs bg-white/10 hover:bg-yellow hover:text-charcoal text-white px-2.5 py-1 rounded-full transition-colors font-medium flex items-center gap-1.5";
+    toggleBtn.title = "Chat directly with our staff";
+  }
+  if (toggleIcon) toggleIcon.className = "fas fa-user-friends text-[11px]";
+  if (toggleLabel) toggleLabel.textContent = "Chat with Staff";
+
+  if (banner) banner.classList.add("hidden");
+
+  if (input) {
+    input.placeholder = "Type a message or question...";
+    input.focus();
+  }
+
+  renderQuickChips();
+
+  if (showNotice) {
+    appendMessage("system", "🤖 Switched back to Manila Prime Chat Assistant. Ask me anything about our units, rates, or pool rules!");
+  }
+}
+
+function updateStaffBanner() {
+  const banner = document.getElementById("human-active-banner");
+  const dot = document.getElementById("staff-banner-dot");
+  const text = document.getElementById("staff-banner-text");
+  if (!banner) return;
+
+  banner.classList.remove("hidden");
+
+  if (staffActive) {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-green-500 animate-pulse";
+    if (text) text.textContent = "Manila Prime Staff is in this chat";
+  } else if (staffNotifiedForSession) {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+    if (text) text.textContent = "Staff notified — waiting for reply";
+  } else {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-yellow-500";
+    if (text) text.textContent = "Direct chat with Manila Prime Staff";
+  }
+}
+
+function renderQuickChips() {
+  const container = document.getElementById("chat-quick-chips");
+  if (!container) return;
+
+  if (currentMode === "assistant") {
+    container.innerHTML = `
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are your unit rates?">
+        💰 Unit Rates
+      </button>
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="How does pool access work and what are the fees?">
+        🏊 Pool Info
+      </button>
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are your check-in and check-out times?">
+        ⏰ Check-in / Out
+      </button>
+      <button class="chip-btn text-xs bg-yellow/20 hover:bg-yellow text-charcoal font-semibold px-3 py-1.5 rounded-full whitespace-nowrap transition-colors" data-action="switch-to-staff">
+        💬 Chat with Staff
+      </button>
+    `;
+  } else {
+    container.innerHTML = `
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="Hi, is early check-in possible on my booking dates?">
+        🕒 Early Check-in?
+      </button>
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="Can you assist me with bank or GCash payment confirmation?">
+        💳 Payment Help
+      </button>
+      <button class="chip-btn text-xs bg-gray-100 hover:bg-yellow text-charcoal px-3 py-1.5 rounded-full whitespace-nowrap transition-colors font-medium" data-text="What are the swimming pool rules and passes?">
+        🏊 Pool Details
+      </button>
+      <button class="chip-btn text-xs bg-yellow/20 hover:bg-yellow text-charcoal font-semibold px-3 py-1.5 rounded-full whitespace-nowrap transition-colors" data-action="switch-to-assistant">
+        🤖 Back to Assistant
+      </button>
+    `;
+  }
+
+  container.querySelectorAll(".chip-btn").forEach(chip => {
     chip.onclick = () => {
-      if (chip.getAttribute("data-action") === "talk-to-human") {
-        requestStaff();
+      const action = chip.getAttribute("data-action");
+      if (action === "switch-to-staff") {
+        switchToStaffMode(true);
+      } else if (action === "switch-to-assistant") {
+        switchToAssistantMode(true);
       } else {
         const text = chip.getAttribute("data-text");
-        handleUserMessage(text);
+        if (text) handleUserMessage(text);
       }
     };
   });
@@ -218,16 +383,21 @@ async function handleUserMessage(text) {
   appendMessage("user", text);
   await recordChatMessage("user", text);
 
+  // If in Assistant mode and guest asked for staff/human
   const isAskingHuman = /\b(human|agent|host|person|call|speak|talk to someone|staff|owner)\b/i.test(text);
-  if (isAskingHuman && !isHumanMode) {
-    await requestStaff(text);
+  if (isAskingHuman && currentMode === "assistant") {
+    switchToStaffMode(false);
+    await notifyStaff(text);
     return;
   }
 
-  if (isHumanMode) {
+  // If in Staff mode, notify staff now that they chatted!
+  if (currentMode === "staff") {
+    await notifyStaff(text);
     return;
   }
 
+  // Assistant responds to question
   showTypingIndicator(true);
   try {
     const aiAnswer = await generateAIAnswer(text);
@@ -237,7 +407,44 @@ async function handleUserMessage(text) {
   } catch (err) {
     console.error("AI error:", err);
     showTypingIndicator(false);
-    appendMessage("assistant", "I'm having a brief connection issue. Would you like me to connect you with Manila Prime Staff directly?");
+    appendMessage("assistant", "I'm having a brief connection issue. Tap 'Chat with Staff' above to message our team directly!");
+  }
+}
+
+async function notifyStaff(messageText) {
+  staffNotifiedForSession = true;
+  updateStaffBanner();
+
+  const headerStatus = document.getElementById("chat-header-status");
+  if (headerStatus && !staffActive) {
+    headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Staff Notified • Connecting`;
+  }
+
+  appendMessage("system", "👋 Your message has been sent to our staff. Someone from Manila Prime Staff will reply right here in just a moment!");
+
+  try {
+    await ensureVisitorAuth();
+    const chatRef = doc(db, "guest-chats", chatId);
+    await setDoc(chatRef, {
+      id: chatId,
+      status: "needs_human",
+      lastInquiry: messageText,
+      lastMessage: messageText,
+      lastSender: "user",
+      updatedAt: serverTimestamp(),
+      platform: "website"
+    }, { merge: true });
+
+    // Send discord notification to staff
+    await fetch(`${API_BASE_URL}/sendDiscordNotification`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `🚨 **Live Guest Chat Message!**\nA website visitor sent a message to staff.\n**Chat ID:** \`${chatId}\`\n**Message:** "${messageText}"\n*Open Staff Dashboard to reply live!*`
+      })
+    }).catch(() => {});
+  } catch (e) {
+    console.warn("Error notifying staff:", e);
   }
 }
 
@@ -302,45 +509,6 @@ function getLocalFaqAnswer(query) {
   return "We're here to help! Feel free to check our available units and live calendar in the booking section above, or tap 'Chat with Staff' to message our team directly.";
 }
 
-export async function requestStaff(initialQuery = "") {
-  isHumanMode = true;
-  await ensureVisitorAuth();
-
-  const banner = document.getElementById("human-active-banner");
-  const headerIcon = document.getElementById("chat-header-icon");
-  const headerTitle = document.getElementById("chat-header-title");
-  const headerStatus = document.getElementById("chat-header-status");
-
-  if (banner) banner.classList.remove("hidden");
-  if (headerIcon) headerIcon.className = "fas fa-user-friends text-lg";
-  if (headerTitle) headerTitle.textContent = "Manila Prime Staff";
-  if (headerStatus) headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span> Staff Notified • Connecting`;
-
-  appendMessage("system", "👋 We've notified our staff. Someone from Manila Prime Staff will reply right here in just a moment!");
-
-  try {
-    const chatRef = doc(db, "guest-chats", chatId);
-    await setDoc(chatRef, {
-      id: chatId,
-      status: "needs_human",
-      lastInquiry: initialQuery || "Guest requested staff assistance.",
-      updatedAt: serverTimestamp(),
-      platform: "website"
-    }, { merge: true });
-
-    // Send discord notification to staff
-    await fetch(`${API_BASE_URL}/sendDiscordNotification`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: `🚨 **Live Guest Chat Request!**\nA website visitor has asked to speak with staff.\n**Chat ID:** \`${chatId}\`\n**Last Message:** "${initialQuery || 'Needs staff assistance'}"\n*Open Staff Dashboard to reply live!*`
-      })
-    }).catch(() => {});
-  } catch (e) {
-    console.warn("Error notifying staff:", e);
-  }
-}
-
 function listenToChatUpdates() {
   if (chatUnsubscribe) chatUnsubscribe();
 
@@ -349,9 +517,15 @@ function listenToChatUpdates() {
     if (!snapshot.exists()) return;
     const data = snapshot.data();
 
-    if (data.status === "human_active" && !isHumanMode) {
-      isHumanMode = true;
-      document.getElementById("human-active-banner")?.classList.remove("hidden");
+    if (data.status === "human_active") {
+      staffActive = true;
+      if (currentMode === "staff") {
+        updateStaffBanner();
+        const headerStatus = document.getElementById("chat-header-status");
+        if (headerStatus) {
+          headerStatus.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Staff Active`;
+        }
+      }
     }
 
     if (data.messages && Array.isArray(data.messages)) {
@@ -359,6 +533,13 @@ function listenToChatUpdates() {
       if (latestMsg && (latestMsg.sender === "staff" || latestMsg.sender === "host") && !latestMsg.renderedInClient) {
         appendMessage(latestMsg.sender, latestMsg.text);
         latestMsg.renderedInClient = true;
+        staffActive = true;
+
+        if (currentMode !== "staff") {
+          switchToStaffMode(false);
+        } else {
+          updateStaffBanner();
+        }
       }
     }
   }, (err) => {
@@ -465,6 +646,15 @@ function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+export async function requestStaff(initialQuery = "") {
+  if (initialQuery) {
+    switchToStaffMode(false);
+    await notifyStaff(initialQuery);
+  } else {
+    switchToStaffMode(true);
+  }
 }
 
 export { requestStaff as requestHumanHost };
