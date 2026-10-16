@@ -175,12 +175,18 @@
         
         .scroll-to-top {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 99;
+            bottom: 92px;
+            right: 22px;
+            z-index: 40;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.5s ease;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+            .scroll-to-top {
+                right: 28px;
+            }
         }
         
         .scroll-to-top.active {
@@ -1195,8 +1201,8 @@
     </footer>
 
     <!-- Scroll to Top Button -->
-    <button id="scroll-to-top" class="scroll-to-top bg-yellow hover:bg-yellow-dark text-charcoal w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
-        <i class="fas fa-chevron-up"></i>
+    <button id="scroll-to-top" class="scroll-to-top bg-white hover:bg-yellow text-charcoal border border-gray-200 hover:border-yellow w-11 h-11 rounded-full flex items-center justify-center shadow-md transition-all hover:scale-105 active:scale-95" title="Back to top">
+        <i class="fas fa-chevron-up text-sm"></i>
     </button>
 
     <script>
@@ -1297,7 +1303,7 @@
     <script type="module" src="/js/firebase-app.js?v=2.1"></script>
     <script type="module" src="/js/units.js?v=2.1"></script>
     <script type="module" src="/js/booking.js?v=2.1"></script>
-    <script type="module" src="/js/ai-chat.js?v=2.2"></script>
+    <script type="module" src="/js/ai-chat.js?v=2.3"></script>
 </body>
 </html>
 

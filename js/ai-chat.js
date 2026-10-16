@@ -363,6 +363,7 @@ function renderQuickChips() {
 function toggleChatWindow(forceState) {
   const win = document.getElementById("mp-chat-window");
   const tooltip = document.getElementById("mp-chat-tooltip");
+  const scrollTopBtn = document.getElementById("scroll-to-top");
   if (!win) return;
 
   const isOpen = !win.classList.contains("pointer-events-none");
@@ -372,10 +373,12 @@ function toggleChatWindow(forceState) {
     win.classList.remove("pointer-events-none", "opacity-0", "translate-y-4");
     win.classList.add("opacity-100", "translate-y-0");
     if (tooltip) tooltip.classList.add("hidden");
+    if (scrollTopBtn) scrollTopBtn.style.display = "none";
     document.getElementById("chat-user-input")?.focus();
   } else {
     win.classList.add("pointer-events-none", "opacity-0", "translate-y-4");
     win.classList.remove("opacity-100", "translate-y-0");
+    if (scrollTopBtn) scrollTopBtn.style.display = "";
   }
 }
 
