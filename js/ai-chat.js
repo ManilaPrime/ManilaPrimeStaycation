@@ -12,10 +12,10 @@ import {
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-let chatId = localStorage.getItem("mp_guest_chat_id");
+let chatId = localStorage.getItem("mp_guest_chat_v3");
 if (!chatId) {
   chatId = "chat_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
-  localStorage.setItem("mp_guest_chat_id", chatId);
+  localStorage.setItem("mp_guest_chat_v3", chatId);
 }
 
 let isHumanMode = false;
@@ -356,8 +356,8 @@ function listenToChatUpdates() {
 
     if (data.messages && Array.isArray(data.messages)) {
       const latestMsg = data.messages[data.messages.length - 1];
-      if (latestMsg && latestMsg.sender === "host" && !latestMsg.renderedInClient) {
-        appendMessage("host", latestMsg.text);
+      if (latestMsg && (latestMsg.sender === "staff" || latestMsg.sender === "host") && !latestMsg.renderedInClient) {
+        appendMessage(latestMsg.sender, latestMsg.text);
         latestMsg.renderedInClient = true;
       }
     }
@@ -399,7 +399,7 @@ function appendMessage(sender, text) {
         ${escapeHtml(text)}
       </div>
     `;
-  } else if (sender === "host") {
+  } else if (sender === "host" || sender === "staff") {
     msgDiv.className = "flex gap-2.5 items-start";
     msgDiv.innerHTML = `
       <div class="w-7 h-7 rounded-full bg-yellow text-charcoal flex items-center justify-center text-xs shrink-0 font-bold shadow-xs">

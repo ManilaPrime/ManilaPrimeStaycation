@@ -920,11 +920,11 @@ function setupLiveChatEvents() {
       const chatRef = doc(db, "guest-chats", activeChatId);
       await setDoc(chatRef, {
         status: "human_active",
-        lastSender: "host",
+        lastSender: "staff",
         lastMessage: text,
         updatedAt: serverTimestamp(),
         messages: arrayUnion({
-          sender: "host",
+          sender: "staff",
           text,
           timestamp: new Date().toISOString()
         })
@@ -1013,17 +1013,17 @@ function openActiveChat(chatId) {
     messagesBox.innerHTML = `<div class="text-center py-10 text-gray-400 text-xs">No messages yet.</div>`;
   } else {
     messagesBox.innerHTML = messages.map(m => {
-      const isHost = m.sender === "host";
+      const isStaff = m.sender === "staff" || m.sender === "host";
       const isUser = m.sender === "user";
       return `
-        <div class="flex ${isHost ? 'justify-end' : 'justify-start'}">
+        <div class="flex ${isStaff ? 'justify-end' : 'justify-start'}">
           <div class="max-w-[75%] p-3 rounded-2xl text-xs ${
-            isHost ? 'bg-yellow text-charcoal font-medium rounded-tr-none' :
+            isStaff ? 'bg-yellow text-charcoal font-medium rounded-tr-none' :
             isUser ? 'bg-charcoal text-white rounded-tl-none' :
             'bg-white border border-gray-200 text-gray-700'
           }">
             <div class="text-[9px] uppercase tracking-wider mb-1 opacity-70">
-              ${isHost ? 'Manila Prime Staff (You)' : isUser ? 'Guest' : 'Chat Assistant'}
+              ${isStaff ? 'Manila Prime Staff (You)' : isUser ? 'Guest' : 'Chat Assistant'}
             </div>
             ${m.text}
           </div>
