@@ -795,7 +795,10 @@ function renderBookingsTable(filter = "all") {
     return `
       <tr class="hover:bg-gray-50/70 transition-colors">
         <td class="py-3 px-4 font-mono font-bold text-xs text-charcoal">
-          ${b.id ? b.id.substring(0, 10) + '...' : 'N/A'}
+          <div>${b.id ? b.id.substring(0, 10) + '...' : 'N/A'}</div>
+          <span class="inline-flex items-center gap-1 text-[10px] font-sans font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded mt-1 uppercase tracking-wide">
+            <i class="fas fa-globe text-[9px]"></i> ${b.source || 'website'}
+          </span>
         </td>
         <td class="py-3 px-4 font-semibold text-charcoal text-xs">
           ${b.unitName || b.unitId || "Unit"}
