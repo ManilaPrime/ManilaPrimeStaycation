@@ -186,11 +186,43 @@
 
       <!-- ================= TAB 2: BOOKINGS & PAYMENTS ================= -->
       <section id="tab-bookings" class="tab-content hidden space-y-6">
-        <div class="flex items-center gap-2 border-b border-gray-200 pb-3 overflow-x-auto">
-          <button class="booking-filter-btn active px-4 py-1.5 rounded-lg text-xs font-semibold bg-charcoal text-white" data-filter="all">All</button>
-          <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-gray-200 text-gray-700" data-filter="pending">Pending Payment</button>
-          <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-gray-200 text-gray-700" data-filter="confirmed">Confirmed</button>
-          <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-gray-200 text-gray-700" data-filter="cancelled">Cancelled</button>
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-4 rounded-2xl shadow-xs border border-gray-200">
+            <span class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider block">Total Bookings</span>
+            <span class="text-2xl font-bold text-charcoal mt-1 block" id="stat-total-bookings">0</span>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-xs border border-gray-200">
+            <span class="text-[11px] text-blue-500 font-semibold uppercase tracking-wider block flex items-center gap-1.5">
+              <i class="fas fa-globe text-xs"></i> Website Direct
+            </span>
+            <span class="text-2xl font-bold text-blue-600 mt-1 block" id="stat-website-bookings">0</span>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-xs border border-gray-200">
+            <span class="text-[11px] text-amber-600 font-semibold uppercase tracking-wider block flex items-center gap-1.5">
+              <i class="fas fa-clock text-xs"></i> Needs Verification
+            </span>
+            <span class="text-2xl font-bold text-amber-600 mt-1 block" id="stat-pending-bookings">0</span>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-xs border border-gray-200">
+            <span class="text-[11px] text-green-600 font-semibold uppercase tracking-wider block flex items-center gap-1.5">
+              <i class="fas fa-check-circle text-xs"></i> Confirmed Revenue
+            </span>
+            <span class="text-2xl font-bold text-green-700 mt-1 block" id="stat-confirmed-revenue">₱0</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-3">
+          <div class="flex items-center gap-2 overflow-x-auto">
+            <button class="booking-filter-btn active px-4 py-1.5 rounded-lg text-xs font-semibold bg-charcoal text-white" data-filter="all">All</button>
+            <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100" data-filter="website">🌐 Website Direct</button>
+            <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-gray-200 text-gray-700" data-filter="pending">Pending Payment</button>
+            <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-gray-200 text-gray-700" data-filter="confirmed">Confirmed</button>
+            <button class="booking-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-gray-200 text-gray-700" data-filter="cancelled">Cancelled</button>
+          </div>
+          <button id="admin-sync-calendars-btn" class="bg-gray-100 hover:bg-yellow hover:text-charcoal text-gray-700 text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-all flex items-center gap-1.5">
+            <i class="fas fa-sync-alt text-xs" id="admin-sync-icon"></i> Sync External Calendars
+          </button>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -428,6 +460,6 @@
     <span id="toast-text">Success message</span>
   </div>
 
-  <script type="module" src="/admin/admin.js?v=2.2"></script>
+  <script type="module" src="/admin/admin.js?v=2.3"></script>
 </body>
 </html>

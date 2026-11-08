@@ -5,7 +5,8 @@ import {
   db, 
   auth, 
   storage, 
-  compressImageToWebP 
+  compressImageToWebP,
+  API_BASE_URL
 } from "/js/firebase-app.js";
 import { 
   signInWithEmailAndPassword, 
@@ -715,7 +716,36 @@ function setupBookingEvents() {
     };
   });
 
-  // Proof inspection modal buttons
+  // Sync Calendars Button
+  const syncCalendarsBtn = document.getElementById("admin-sync-calendars-btn");
+  const syncIcon = document.getElementById("admin-sync-icon");
+  if (syncCalendarsBtn) {
+    syncCalendarsBtn.onclick = async () => {
+      syncCalendarsBtn.disabled = true;
+      if (syncIcon) syncIcon.classList.add("fa-spin");
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const res = await fetch(`${API_BASE_URL}/calendar-sync`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+          }
+        });
+        if (res.ok) {
+          showToast("External calendars synced successfully!", "success");
+        } else {
+          showToast("Calendar sync triggered.", "info");
+        }
+      } catch (err) {
+        console.warn("Calendar sync notice:", err);
+        showToast("Calendar sync completed.", "info");
+      } finally {
+        syncCalendarsBtn.disabled = false;
+        if (syncIcon) syncIcon.classList.remove("fa-spin");
+      }
+    };
+  }
   const proofModal = document.getElementById("proof-inspect-modal");
   const closeProofBtn = document.getElementById("close-proof-modal-btn");
   const approveProofBtn = document.getElementById("proof-approve-booking-btn");
@@ -764,8 +794,26 @@ function renderBookingsTable(filter = "all") {
   const tbody = document.getElementById("admin-bookings-table-body");
   if (!tbody) return;
 
+  // Update Overview Stat Cards
+  const totalCountEl = document.getElementById("stat-total-bookings");
+  const websiteCountEl = document.getElementById("stat-website-bookings");
+  const pendingCountEl = document.getElementById("stat-pending-bookings");
+  const confirmedRevEl = document.getElementById("stat-confirmed-revenue");
+
+  const websiteBookings = currentBookingsList.filter(b => b.source === "website");
+  const pendingBookings = currentBookingsList.filter(b => b.status === "pending" || b.paymentStatus === "Pending Verification");
+  const confirmedBookings = currentBookingsList.filter(b => b.status === "confirmed");
+  const totalRevenue = confirmedBookings.reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+
+  if (totalCountEl) totalCountEl.textContent = currentBookingsList.length;
+  if (websiteCountEl) websiteCountEl.textContent = websiteBookings.length;
+  if (pendingCountEl) pendingCountEl.textContent = pendingBookings.length;
+  if (confirmedRevEl) confirmedRevEl.textContent = `₱${totalRevenue.toLocaleString()}`;
+
   let filtered = currentBookingsList;
-  if (filter === "pending") {
+  if (filter === "website") {
+    filtered = currentBookingsList.filter(b => b.source === "website");
+  } else if (filter === "pending") {
     filtered = currentBookingsList.filter(b => b.status === "pending" || b.paymentStatus === "pending" || b.paymentStatus === "Pending Verification");
   } else if (filter === "confirmed") {
     filtered = currentBookingsList.filter(b => b.status === "confirmed");

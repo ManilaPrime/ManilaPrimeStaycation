@@ -210,12 +210,42 @@ export function checkDateConflict(checkinDate, checkoutDate, occupiedRanges) {
 }
 
 /**
- * Submit a direct website booking with atomic conflict verification
+ * Submit a direct website booking with atomic conflict verification via backend endpoint
  */
 export async function submitWebsiteBooking(bookingData) {
+  // 1. Try submitting to the backend /website-booking endpoint
+  try {
+    const response = await fetch(`${API_BASE_URL}/website-booking`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...bookingData,
+        source: "website"
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        success: true,
+        bookingId: data.bookingId || data.id,
+        booking: data.booking || { ...bookingData, id: data.bookingId || data.id }
+      };
+    } else if (response.status === 409) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson.error || "Sorry, these dates were just reserved by another guest. Please select alternative dates or units.");
+    }
+  } catch (apiErr) {
+    // If it's a conflict error, rethrow immediately
+    if (apiErr.message && apiErr.message.includes("dates were just reserved")) {
+      throw apiErr;
+    }
+    console.warn("Backend /website-booking endpoint unreachable, falling back to direct Firestore:", apiErr);
+  }
+
+  // 2. Direct Firestore fallback (resilience)
   await ensureVisitorAuth();
 
-  // 1. Re-verify availability directly before saving
   const currentOccupancy = await getUnitAvailability(bookingData.unitId);
   const conflictCheck = checkDateConflict(bookingData.checkinDate, bookingData.checkoutDate, currentOccupancy);
 
@@ -223,7 +253,6 @@ export async function submitWebsiteBooking(bookingData) {
     throw new Error("Sorry, these dates were just reserved by another guest. Please select alternative dates or units.");
   }
 
-  // 2. Create booking document in Firestore
   const bookingRef = doc(collection(db, "bookings"));
   const bookingId = bookingRef.id;
 
@@ -232,7 +261,7 @@ export async function submitWebsiteBooking(bookingData) {
     id: bookingId,
     bookingId: bookingId,
     source: "website",
-    status: "pending", // Waiting for staff to verify payment proof
+    status: "pending",
     paymentStatus: "pending",
     securityDepositStatus: "Unpaid",
     createdAt: new Date().toISOString(),
@@ -241,7 +270,6 @@ export async function submitWebsiteBooking(bookingData) {
 
   await setDoc(bookingRef, newBooking);
 
-  // Invalidate cached units availability
   return {
     success: true,
     bookingId,
@@ -250,9 +278,29 @@ export async function submitWebsiteBooking(bookingData) {
 }
 
 /**
- * Submit payment proof (Reference number + receipt image)
+ * Submit payment proof (Reference number + receipt image) via backend endpoint
  */
 export async function submitPaymentProof(bookingId, referenceNumber, receiptDataOrUrl, paymentMethod = "GCash") {
+  // 1. Try submitting via backend endpoint
+  try {
+    const response = await fetch(`${API_BASE_URL}/website-booking/${bookingId}/payment-proof`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        paymentReference: referenceNumber,
+        paymentMethod,
+        paymentReceiptUrl: receiptDataOrUrl
+      })
+    });
+
+    if (response.ok) {
+      return { success: true };
+    }
+  } catch (apiErr) {
+    console.warn("Backend payment proof endpoint unreachable, falling back to direct Firestore:", apiErr);
+  }
+
+  // 2. Direct Firestore fallback
   await ensureVisitorAuth();
   const bookingRef = doc(db, "bookings", bookingId);
 
