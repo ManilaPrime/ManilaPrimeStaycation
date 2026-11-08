@@ -326,6 +326,8 @@ async function handleBookingSubmission(e) {
     const extraGuests = Math.max(0, (adults + children) - baseOccupancy);
     const totalAmount = (totalNights * (selectedUnit.rate || 1899)) + (extraGuests * extraFee * totalNights);
 
+    const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
+
     const bookingPayload = {
       unitId: selectedUnit.id,
       unitName: selectedUnit.name,
@@ -339,7 +341,8 @@ async function handleBookingSubmission(e) {
       children,
       nightlyRate: selectedUnit.rate || 1899,
       totalAmount,
-      specialRequests
+      specialRequests,
+      turnstileToken
     };
 
     const res = await submitWebsiteBooking(bookingPayload);
