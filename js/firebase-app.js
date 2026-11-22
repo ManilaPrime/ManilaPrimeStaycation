@@ -280,23 +280,43 @@ export async function submitWebsiteBooking(bookingData) {
 /**
  * Submit payment proof (Reference number + receipt image) via backend endpoint
  */
-export async function submitPaymentProof(bookingId, referenceNumber, receiptDataOrUrl, paymentMethod = "GCash") {
+export async function submitPaymentProof(
+  bookingId,
+  referenceNumber,
+  receiptDataOrUrl,
+  paymentMethod = "GCash",
+  guestPhone = "",
+  guestEmail = ""
+) {
   // 1. Try submitting via backend endpoint
   try {
+    const isBase64 = receiptDataOrUrl && receiptDataOrUrl.startsWith("data:");
+    const payload = {
+      paymentReference: referenceNumber,
+      paymentMethod,
+      paymentReceiptUrl: isBase64 ? null : receiptDataOrUrl,
+      imageBase64: isBase64 ? receiptDataOrUrl : null,
+      mimeType: isBase64 ? "image/webp" : null,
+      guestPhone,
+      guestEmail,
+    };
+
     const response = await fetch(`${API_BASE_URL}/website-booking/${bookingId}/payment-proof`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        paymentReference: referenceNumber,
-        paymentMethod,
-        paymentReceiptUrl: receiptDataOrUrl
-      })
+      body: JSON.stringify(payload)
     });
 
+    const data = await response.json();
     if (response.ok) {
-      return { success: true };
+      return data;
+    } else {
+      throw new Error(data.error || "Payment submission failed.");
     }
   } catch (apiErr) {
+    if (apiErr.message && !apiErr.message.includes("Failed to fetch") && !apiErr.message.includes("NetworkError")) {
+      throw apiErr;
+    }
     console.warn("Backend payment proof endpoint unreachable, falling back to direct Firestore:", apiErr);
   }
 

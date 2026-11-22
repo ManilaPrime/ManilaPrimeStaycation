@@ -360,10 +360,13 @@ async function handleBookingSubmission(e) {
   }
 }
 
+let currentBookingContext = null;
+
 /**
  * Step 2: Show Option A Payment Instructions
  */
 function showPaymentStep(bookingId, booking) {
+  currentBookingContext = { ...booking, bookingId };
   const bookingStep = document.getElementById("booking-step-form");
   const paymentStep = document.getElementById("booking-step-payment");
 
@@ -418,7 +421,9 @@ async function handlePaymentProofSubmission(e) {
       receiptDataUrl = await readFileAsBase64(compressed);
     }
 
-    await submitPaymentProof(bookingId, refNumber, receiptDataUrl);
+    const phone = currentBookingContext?.guestPhone || "";
+    const email = currentBookingContext?.guestEmail || "";
+    await submitPaymentProof(bookingId, refNumber, receiptDataUrl, "GCash", phone, email);
 
     // Show Success screen
     const paymentStep = document.getElementById("booking-step-payment");

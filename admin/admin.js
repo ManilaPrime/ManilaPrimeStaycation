@@ -26,6 +26,7 @@ import {
   updateDoc, 
   deleteDoc, 
   query, 
+  where,
   orderBy, 
   onSnapshot, 
   serverTimestamp, 
@@ -757,13 +758,37 @@ function setupBookingEvents() {
     if (!activeProofBooking) return;
     approveProofBtn.disabled = true;
     try {
+      // 1. Mark unverified payments in booking-payments as Paid
+      const paymentsQuery = query(collection(db, "booking-payments"), where("bookingId", "==", activeProofBooking.id));
+      const pSnap = await getDocs(paymentsQuery);
+      let verifiedSum = 0;
+      for (const pDoc of pSnap.docs) {
+        await updateDoc(pDoc.ref, {
+          status: "Paid",
+          paymentStatus: "Paid",
+          verifiedAt: serverTimestamp()
+        });
+        verifiedSum += Number(pDoc.data().amount) || 0;
+      }
+
+      // If no separate payment document was found, fallback to totalAmount
+      if (pSnap.empty && activeProofBooking.totalAmount) {
+        verifiedSum = Number(activeProofBooking.totalAmount);
+      }
+
+      const totalAmt = Number(activeProofBooking.totalAmount || 0);
+      const isFull = totalAmt > 0 && verifiedSum >= totalAmt;
+      const paymentStatus = isFull ? "Paid" : (verifiedSum > 0 ? "Partial" : "Paid");
+
       await updateDoc(doc(db, "bookings", activeProofBooking.id), {
         status: "confirmed",
-        paymentStatus: "Paid",
-        "bookingPayment.status": "Paid",
+        paymentStatus,
+        paidTotal: verifiedSum,
+        balance: Math.max(0, totalAmt - verifiedSum),
+        "bookingPayment.status": paymentStatus,
         updatedAt: serverTimestamp()
       });
-      showToast("Booking Approved and Marked Paid!", "success");
+      showToast(`Booking Approved! (Status: ${paymentStatus})`, "success");
       proofModal.classList.add("hidden");
     } catch (e) {
       alert("Approval error: " + e.message);
